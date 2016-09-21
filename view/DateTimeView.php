@@ -7,7 +7,7 @@ class DateTimeView {
 
 	    $date = new DateTime();
 
-        $timeString = $date->format("l") . ", " . $date->format("jS \of F Y") . ", The time is " . $date->format("H:i:s");
+        $timeString = $date->format("l") . ", the " . $date->format("jS \of F Y") . ", The time is " . $date->format("H:i:s");
 
 		return '<p>' . $timeString . '</p>';
 	}
