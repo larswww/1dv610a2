@@ -23,9 +23,13 @@ class LayoutView {
       </html>
     ';
   }
-  
-  private function renderIsLoggedIn($isLoggedIn) {
-    if ($isLoggedIn) {
+
+    /**
+     * @param $isLoggedIn
+     * @return string
+     */
+    private function renderIsLoggedIn($isLoggedIn) {
+        if ($isLoggedIn) {
       return '<h2>Logged in</h2>';
     }
     else {
