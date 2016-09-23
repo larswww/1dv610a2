@@ -51,13 +51,14 @@
       <file leaf-file-name="LoginView.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/view/LoginView.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="322">
-              <caret line="35" column="59" selection-start-line="35" selection-start-column="59" selection-end-line="35" selection-end-column="59" />
+            <state relative-caret-position="345">
+              <caret line="35" column="13" selection-start-line="35" selection-start-column="13" selection-end-line="35" selection-end-column="13" />
               <folding>
-                <marker date="1474628101000" expanded="true" signature="1358:1498" ph="..." />
-                <marker date="1474628101000" expanded="true" signature="1760:2453" ph="..." />
-                <marker date="1474628101000" expanded="true" signature="1777:1847" ph="..." />
-                <marker date="1474628101000" expanded="true" signature="1777:2442" ph="..." />
+                <marker date="1474629154000" expanded="true" signature="1502:1642" ph="..." />
+                <marker date="1474629154000" expanded="true" signature="1904:2623" ph="..." />
+                <marker date="1474629154000" expanded="true" signature="1921:1991" ph="..." />
+                <marker date="1474629154000" expanded="true" signature="1921:2210" ph="..." />
+                <marker date="1474629154000" expanded="true" signature="1921:2612" ph="..." />
               </folding>
             </state>
           </provider>
@@ -416,12 +417,12 @@
       <workItem from="1474522053468" duration="4304000" />
       <workItem from="1474558663048" duration="953000" />
       <workItem from="1474559785037" duration="519000" />
-      <workItem from="1474619268152" duration="4897000" />
+      <workItem from="1474619268152" duration="5737000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="17041000" />
+    <option name="totallyTimeSpent" value="17881000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="2" y="23" width="1914" height="1041" extended-state="0" />
@@ -462,7 +463,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/view/LoginView.php</url>
-          <line>21</line>
+          <line>22</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
@@ -503,10 +504,11 @@
         <state relative-caret-position="480">
           <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
           <folding>
-            <marker date="1474628101000" expanded="true" signature="1358:1498" ph="..." />
-            <marker date="1474628101000" expanded="true" signature="1760:2453" ph="..." />
-            <marker date="1474628101000" expanded="true" signature="1777:1847" ph="..." />
-            <marker date="1474628101000" expanded="true" signature="1777:2442" ph="..." />
+            <marker date="1474629154000" expanded="true" signature="1502:1642" ph="..." />
+            <marker date="1474629154000" expanded="true" signature="1904:2623" ph="..." />
+            <marker date="1474629154000" expanded="true" signature="1921:1991" ph="..." />
+            <marker date="1474629154000" expanded="true" signature="1921:2210" ph="..." />
+            <marker date="1474629154000" expanded="true" signature="1921:2612" ph="..." />
           </folding>
         </state>
       </provider>
@@ -596,13 +598,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/view/LoginView.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
-          <caret line="35" column="59" selection-start-line="35" selection-start-column="59" selection-end-line="35" selection-end-column="59" />
+        <state relative-caret-position="345">
+          <caret line="35" column="13" selection-start-line="35" selection-start-column="13" selection-end-line="35" selection-end-column="13" />
           <folding>
-            <marker date="1474628101000" expanded="true" signature="1358:1498" ph="..." />
-            <marker date="1474628101000" expanded="true" signature="1760:2453" ph="..." />
-            <marker date="1474628101000" expanded="true" signature="1777:1847" ph="..." />
-            <marker date="1474628101000" expanded="true" signature="1777:2442" ph="..." />
+            <marker date="1474629154000" expanded="true" signature="1502:1642" ph="..." />
+            <marker date="1474629154000" expanded="true" signature="1904:2623" ph="..." />
+            <marker date="1474629154000" expanded="true" signature="1921:1991" ph="..." />
+            <marker date="1474629154000" expanded="true" signature="1921:2210" ph="..." />
+            <marker date="1474629154000" expanded="true" signature="1921:2612" ph="..." />
           </folding>
         </state>
       </provider>

@@ -9,6 +9,7 @@ class LoginView {
 	private static $cookiePassword = 'LoginView::CookiePassword';
 	private static $keep = 'LoginView::KeepMeLoggedIn';
 	private static $messageId = 'LoginView::Message';
+    private static $enteredName = "";
 
 	
 
@@ -24,11 +25,14 @@ class LoginView {
         $message = "";
 
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $postedName = $_POST[self::$name];
 
             if (empty($_POST[self::$name])) {
                 $message = "Username is missing";
+
             } else if (empty($_POST[self::$password])) {
                 $message = "Password is missing";
+                self::$enteredName = $_POST[self::$name];
             }
 
         }
@@ -65,7 +69,7 @@ class LoginView {
 					<p id="' . self::$messageId . '">' . $message . '</p>
 					
 					<label for="' . self::$name . '">Username :</label>
-					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="" />
+					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . self::$enteredName . '" />
 
 					<label for="' . self::$password . '">Password :</label>
 					<input type="password" id="' . self::$password . '" name="' . self::$password . '" />
