@@ -1,5 +1,6 @@
 <?php
 use view;
+include("../config.php");
 
 //INCLUDE THE FILES NEEDED...
 require_once('view/LoginView.php');
@@ -13,7 +14,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 
 // CREATE OBJECTS OF THE MODELS
-$db = new \model\userDB();
+$db = new \model\userDB($config);
 //$db->saveUser("Admin", "Password");
 //$db->getUser("Admin", "password");
 
