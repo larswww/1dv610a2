@@ -15,7 +15,7 @@ ini_set('display_errors', 'On');
 
 // CREATE OBJECTS OF THE MODELS
 $db = new \model\userDB($config);
-//$db->saveUser("Admin", "Password");
+$db->saveUser("Admin", "Password");
 //$db->getUser("Admin", "password");
 
 // CREATE OBJECTS OF THE CONTROLLERS
