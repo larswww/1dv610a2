@@ -11,16 +11,17 @@ class AuthController {
 
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $postedName = $_POST[$username];
+            $postedPassword = $_POST[$password];
 
-            if (empty($_POST[$username])) {
+            if (empty($postedName)) {
                 $message = "Username is missing";
 
-            } else if (empty($_POST[$password])) {
+            } else if (empty($postedPassword)) {
                 $message = "Password is missing";
-                $view->setEnteredName($_POST[$username]);
+                $view->setEnteredName($postedName);
             } else {
-                $message = $this->db->getUser($_POST[$username], $_POST[$password]);
-                $view->setEnteredName($_POST[$username]);
+                $message = $this->db->getUser($postedName, $postedPassword);
+                $view->setEnteredName($postedName);
             }
         }
 
@@ -30,12 +31,4 @@ class AuthController {
     function setDb($db) {
         $this->db = $db;
     }
-
-
 }
-/**
- * Created by PhpStorm.
- * User: MBAi
- * Date: 26/09/2016
- * Time: 5:48 PM
- */
