@@ -1,4 +1,6 @@
 <?php
+namespace view;
+use Controller;
 
 class LoginView {
 	private static $login = 'LoginView::Login';
@@ -11,9 +13,17 @@ class LoginView {
 	private static $messageId = 'LoginView::Message';
     private static $enteredName = "";
 
-	
+    public function setEnteredName($name) {
+        return self::$enteredName = $name;
+    }
 
-	/**bre
+    public function setController($controller) {
+        $this->controller = $controller;
+    }
+
+
+
+    /**bre
 	 * Create HTTP response
 	 *
 	 * Should be called after a login attempt has been determined
@@ -22,20 +32,31 @@ class LoginView {
 	 */
 	public function response() {
 
-        $message = "";
+	    //$authController = new \Controller\AuthController();
+        $message = $this->controller->login(self::$name, self::$password);
 
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $postedName = $_POST[self::$name];
 
-            if (empty($_POST[self::$name])) {
-                $message = "Username is missing";
+//        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+//
+//
+//        } else {
+//
+//
+//        }
+//	    $message = $authController->login($_POST[self::$name], $_POST[self::$password]);
 
-            } else if (empty($_POST[self::$password])) {
-                $message = "Password is missing";
-                self::$enteredName = $_POST[self::$name];
-            }
+//        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+//
+//            if (empty($_POST[self::$name])) {
+//                $message = "Username is missing";
+//            } else if (empty($_POST[self::$password])) {
+//                $message = "Password is missing";
+//                self::$enteredName = $_POST[self::$name];
+//            }
+//        }
 
-        }
+//        $authController = new AuthController();
+//        $message = $authController->login(self::$name, self::$password);
 
         $response = $this->generateLoginFormHTML($message);
         //$response .= $this->generateLogoutButtonHTML($message);
