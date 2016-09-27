@@ -29,6 +29,5 @@ $v->setController($authController);
 $dtv = new \view\DateTimeView();
 $lv = new \view\LayoutView();
 
-
-$lv->render(false, $v, $dtv);
+$lv->render($db->getIsLoggedIn(), $v, $dtv);
 

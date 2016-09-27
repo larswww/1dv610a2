@@ -12,6 +12,9 @@ class LoginView {
 	private static $keep = 'LoginView::KeepMeLoggedIn';
 	private static $messageId = 'LoginView::Message';
     private static $enteredName = "";
+    private $authStatus;
+    public $message;
+
 
     public function setEnteredName($name) {
         return self::$enteredName = $name;
@@ -19,6 +22,8 @@ class LoginView {
 
     public function setController($controller) {
         $this->controller = $controller;
+        $this->message = $this->controller->login(self::$name, self::$password);
+
     }
 
 
@@ -32,34 +37,12 @@ class LoginView {
 	 */
 	public function response() {
 
-	    //$authController = new \Controller\AuthController();
-        $message = $this->controller->login(self::$name, self::$password);
+        if ($this->message === "Welcome") {
+            $response = $this->generateLogoutButtonHTML($this->message);
+        } else {
+            $response = $this->generateLoginFormHTML($this->message);
+        }
 
-
-//        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-//
-//
-//        } else {
-//
-//
-//        }
-//	    $message = $authController->login($_POST[self::$name], $_POST[self::$password]);
-
-//        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-//
-//            if (empty($_POST[self::$name])) {
-//                $message = "Username is missing";
-//            } else if (empty($_POST[self::$password])) {
-//                $message = "Password is missing";
-//                self::$enteredName = $_POST[self::$name];
-//            }
-//        }
-
-//        $authController = new AuthController();
-//        $message = $authController->login(self::$name, self::$password);
-
-        $response = $this->generateLoginFormHTML($message);
-        //$response .= $this->generateLogoutButtonHTML($message);
         return $response;
 	}
 
@@ -68,7 +51,7 @@ class LoginView {
 	* @param $message, String output message
 	* @return  void, BUT writes to standard output!
 	*/
-	private function generateLogoutButtonHTML($message) {
+	public function generateLogoutButtonHTML($message) {
 		return '
 			<form  method="post" >
 				<p id="' . self::$messageId . '">' . $message .'</p>
@@ -109,5 +92,4 @@ class LoginView {
 		//RETURN REQUEST VARIABLE: USERNAME
         return $this->name;
 	}
-	
 }

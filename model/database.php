@@ -3,6 +3,7 @@ namespace model;
 
 class userDB {
     private $db;
+    private $isLoggedIn = false;
 
     /**
      * userDB constructor - connects to the database,
@@ -52,6 +53,7 @@ class userDB {
             if (!$isPasswordCorrect || !$isUsernameSame) {
                 return "Wrong name or password";
             } else {
+                $this->setIsLoggedIn(true);
                 return "Welcome";
             }
 
@@ -60,4 +62,13 @@ class userDB {
 
         }
     }
+
+    private function setIsLoggedIn(bool $status) {
+        $this->isLoggedIn = $status;
+    }
+
+    public function getIsLoggedIn() {
+        return $this->isLoggedIn;
+    }
+
 }
