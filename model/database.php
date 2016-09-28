@@ -38,7 +38,7 @@ class userDB {
         }
 
         if ($password !== $passwordRepeat) {
-            $message = "Passwords do not match";
+            $message = "Passwords do not match.";
         }
 
         if ($message === "") {
