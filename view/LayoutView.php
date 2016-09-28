@@ -34,12 +34,12 @@ class LayoutView {
     }
     else {
         if ($_SERVER["QUERY_STRING"] === "register") {
-            $message = '<a href="?">Back to login</a>';
+            $message = "<a href='?'>Back to login</a>";
         } else {
-            $message = '<a href="?register">Register a new user</a>';
+            $message = "<a href='?register'>Register a new user</a>";
         }
 
-      return $message . '<h2>Not logged in</h2>';
+      return $message . "<h2>Not logged in</h2>";
     }
   }
 }
