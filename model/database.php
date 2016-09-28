@@ -41,6 +41,22 @@ class userDB {
             $message = "Passwords do not match.";
         }
 
+        $checkUsernameQuery = $this->db->prepare("SELECT COUNT(*) FROM users WHERE username = '$username'");
+        $checkUsernameQuery->execute();
+        $usernameResult = $checkUsernameQuery->fetch();
+
+        if ($usernameResult["0"] !== "0") {
+            $message = "User exists, pick another username.";
+        }
+
+        $sanitizeUsername = htmlentities($username, ENT_QUOTES | ENT_IGNORE, "UTF-8");
+
+        // this feels not that great, can encodings mess with this?
+        if ($sanitizeUsername !== $username) {
+            $username = strip_tags($username);
+            $message = "Username contains invalid characters.";
+        }
+
         if ($message === "") {
             // hash password using bcrypt then save into database
             try {
@@ -62,7 +78,7 @@ class userDB {
         if ($validUsername) {
             $regView = new \view\RegisterView();
             // change this to using isset and filter it first.
-            $regView->setEnteredName($_REQUEST["RegisterView::UserName"]);
+            $regView->setEnteredName($username);
         }
 
 
