@@ -27,11 +27,18 @@ class userDB {
 
         if (strlen($username) < 4) {
             $message .= "Username has too few characters, at least 3 characters. ";
-            $validUsername = false;
         }
 
         if (strlen($password) < 7) {
+            // dont save the username if the username and the password is invalid
+            if (strlen($message) > 2) {
+                $validUsername = false;
+            }
             $message .= "Password has too few characters, at least 6 characters.";
+        }
+
+        if ($password !== $passwordRepeat) {
+            $message = "Passwords do not match";
         }
 
         if ($message === "") {
