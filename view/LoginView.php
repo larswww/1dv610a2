@@ -1,6 +1,7 @@
 <?php
 namespace view;
 use Controller;
+require_once('RegisterView.php');
 
 class LoginView {
 	private static $login = 'LoginView::Login';
@@ -22,7 +23,7 @@ class LoginView {
 
     public function setController($controller) {
         $this->controller = $controller;
-        $this->message = $this->controller->login(self::$name, self::$password);
+        $this->message = $this->controller->router();
 
     }
 
@@ -39,6 +40,9 @@ class LoginView {
 
         if ($this->message === "Welcome") {
             $response = $this->generateLogoutButtonHTML($this->message);
+        } else if ($_SERVER["QUERY_STRING"] === "register") {
+            $regView = new RegisterView();
+            $response = $regView->generateRegisterFormHTML($this->message);
         } else {
             $response = $this->generateLoginFormHTML($this->message);
         }

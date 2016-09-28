@@ -1,5 +1,5 @@
 <?php
-use view;
+session_start();
 include("../config.php");
 
 //INCLUDE THE FILES NEEDED...
@@ -15,8 +15,6 @@ ini_set('display_errors', 'On');
 
 // CREATE OBJECTS OF THE MODELS
 $db = new \model\userDB($config);
-$db->saveUser("Admin", "Password");
-//$db->getUser("Admin", "password");
 
 // CREATE OBJECTS OF THE CONTROLLERS
 $authController = new \Controller\AuthController();
@@ -28,6 +26,7 @@ $v->setController($authController);
 
 $dtv = new \view\DateTimeView();
 $lv = new \view\LayoutView();
+//$test = new \view\RegisterView();
 
 $lv->render($db->getIsLoggedIn(), $v, $dtv);
 

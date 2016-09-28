@@ -21,21 +21,45 @@ class userDB {
         }
     }
 
-    public function saveUser($username, $password) {
+    public function saveUser($username, $password, $passwordRepeat) {
+        $message = "";
+        $validUsername = true;
 
-        // hash password using bcrypt then save into database
-        try {
-            $userSchema = $this->db->prepare("INSERT INTO users (username, password)" . "VALUES (:username, :password)");
-
-            $pwHash = password_hash($password, PASSWORD_BCRYPT, ["cost" => 12]);
-            $userSchema->execute(array(
-                "username" => $username,
-                "password" => $pwHash
-            ));
-
-        } catch (\Exception $e) {
-            echo $e->getMessage();
+        if (strlen($username) < 4) {
+            $message .= "Username has too few characters, at least 3 characters. ";
+            $validUsername = false;
         }
+
+        if (strlen($password) < 7) {
+            $message .= "Password has too few characters, at least 6 characters.";
+        }
+
+        if ($message === "") {
+            // hash password using bcrypt then save into database
+            try {
+                echo "tried reg";
+                $userSchema = $this->db->prepare("INSERT INTO users (username, password)" . "VALUES (:username, :password)");
+
+                $pwHash = password_hash($password, PASSWORD_BCRYPT, ["cost" => 12]);
+                $userSchema->execute(array(
+                    "username" => $username,
+                    "password" => $pwHash
+                ));
+
+            } catch (\Exception $e) {
+                $validUsername = false;
+                echo $e->getMessage();
+            }
+        }
+
+        if ($validUsername) {
+            $regView = new \view\RegisterView();
+            // change this to using isset and filter it first.
+            $regView->setEnteredName($_REQUEST["RegisterView::UserName"]);
+        }
+
+
+        return $message;
     }
 
     public function getUser($username, $password) {
