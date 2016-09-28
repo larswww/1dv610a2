@@ -38,7 +38,9 @@ class LoginView {
 	 */
 	public function response() {
 
-        if ($this->message === "Welcome" || $_SESSION['isLoggedIn']) {
+	    $sesh = isset($_SESSION['isLoggedIn']) ?? false;
+
+        if ($this->message === "Welcome" || $sesh) {
             $response = $this->generateLogoutButtonHTML($this->message);
         } else if ($this->message === "Registered new user.") {
             $response = $this->generateLoginFormHTML($this->message);
