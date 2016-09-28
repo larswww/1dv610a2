@@ -60,7 +60,6 @@ class userDB {
         if ($message === "") {
             // hash password using bcrypt then save into database
             try {
-                echo "tried reg";
                 $userSchema = $this->db->prepare("INSERT INTO users (username, password)" . "VALUES (:username, :password)");
 
                 $pwHash = password_hash($password, PASSWORD_BCRYPT, ["cost" => 12]);
@@ -68,6 +67,7 @@ class userDB {
                     "username" => $username,
                     "password" => $pwHash
                 ));
+                $message = "Registered new user.";
 
             } catch (\Exception $e) {
                 $validUsername = false;

@@ -40,10 +40,12 @@ class LoginView {
 
         if ($this->message === "Welcome") {
             $response = $this->generateLogoutButtonHTML($this->message);
+        } else if ($this->message === "Registered new user.") {
+            $response = $this->generateLoginFormHTML($this->message);
         } else if ($_SERVER["QUERY_STRING"] === "register") {
             $regView = new RegisterView();
             $response = $regView->generateRegisterFormHTML($this->message);
-        } else {
+        }  else {
             $response = $this->generateLoginFormHTML($this->message);
         }
 
