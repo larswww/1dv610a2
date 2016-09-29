@@ -1,6 +1,5 @@
 <?php
 session_start();
-session_regenerate_id();
 setcookie("PHPSESSID", $_SESSION["PHPSESSID"], time() + (60 * 60 * 0.5), "/a2");
 
 
