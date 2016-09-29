@@ -44,6 +44,8 @@ class AuthController {
                 session_destroy();
                 setcookie("PHPSESSID", 0, time() - 3600);
                 $message = "Bye bye!";
+            } else {
+                $message = "Welcome back with cookie";
             }
 
         }
