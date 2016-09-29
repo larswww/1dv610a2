@@ -50,8 +50,7 @@ class LoginView {
             $response = $this->generateLogoutButtonHTML($this->message);
             $this->message = "";
         } else if ($sesh) {
-            $msg = "";
-            $response = $this->generateLogoutButtonHTML($msg);
+            $response = $this->generateLogoutButtonHTML($this->message);
         } else if ($this->message === "Registered new user.") {
             $this->setEnteredName($_REQUEST["RegisterView::UserName"]);
             $response = $this->generateLoginFormHTML($this->message);
