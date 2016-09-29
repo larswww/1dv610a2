@@ -1,6 +1,6 @@
 <?php
 session_start();
-setcookie("PHPSESSID", $_SESSION["PHPSESSID"], time() + (60 * 60 * 0.5), "/a2");
+//setcookie("PHPSESSID", $_SESSION["PHPSESSID"], time() + (60 * 60 * 1), "/a2");
 
 
 include("../config.php");
