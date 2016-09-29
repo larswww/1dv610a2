@@ -35,10 +35,10 @@ class LayoutView {
       return '<h2>Logged in</h2>';
     }
     else {
-        if ($_SERVER["QUERY_STRING"] === "register") {
+        if ($_SERVER["QUERY_STRING"] === "register=1") {
             $message = "<a href='?'>Back to login</a>";
         } else {
-            $message = "<a href='?register'>Register a new user</a>";
+            $message = "<a href='?register=1'>Register a new user</a>";
         }
 
       return $message . "<h2>Not logged in</h2>";

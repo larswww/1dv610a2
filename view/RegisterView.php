@@ -20,7 +20,7 @@ class RegisterView {
     public function generateRegisterFormHTML($message) {
         return '      
 			<h2>Register new user</h2>
-			<form action="?register" method="post" enctype="multipart/form-data">
+			<form method="post" enctype="multipart/form-data">
 				<fieldset>
 				<legend>Register a new user - Write username and password</legend>
 					<p id="' . self::$messageId . '">' . $message . '</p>
@@ -33,7 +33,7 @@ class RegisterView {
 					<label for="' . self::$passwordRepeat .'" >Repeat password  :</label>
 					<input type="password" size="20" name="' . self::$passwordRepeat .'" id="' . self::$passwordRepeat . '" value="" />
 					<br/>
-					<input id="submit" type="submit" name="DoRegistration"  value="Register" />
+					<input id="submit" type="submit" name="' . self::$registration .'"  value="register" />
 					<br/>
 				</fieldset>
 			</form>

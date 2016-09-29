@@ -48,7 +48,7 @@ class LoginView {
             $response = $this->generateLogoutButtonHTML($msg);
         } else if ($this->message === "Registered new user.") {
             $response = $this->generateLoginFormHTML($this->message);
-        } else if ($_SERVER["QUERY_STRING"] === "register") {
+        } else if (isset($_REQUEST["register"])) {
             $regView = new RegisterView();
             $response = $regView->generateRegisterFormHTML($this->message);
         }  else {
