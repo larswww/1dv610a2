@@ -8,8 +8,10 @@ class AuthController {
 
         $view = new \view\LoginView();
         $message = "";
+        $sesh = isset($_SESSION['isLoggedIn']) ?? false;
 
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && !$sesh) {
 
             if (isset($_REQUEST["register"])) {
                 // too long of a statment
@@ -33,7 +35,11 @@ class AuthController {
                     $view->setEnteredName($postedName);
                 }
 
-            } else if (isset($_REQUEST["LoginView::Logout"])) {
+            }
+
+        } else {
+
+            if (isset($_REQUEST["LoginView::Logout"])) {
                 session_unset();
                 session_destroy();
                 setcookie("PHPSESSID", 0, time() - 3600);
