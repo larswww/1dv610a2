@@ -101,7 +101,6 @@ class userDB {
                 return "Wrong name or password";
             } else {
                 $this->setIsLoggedIn(true);
-                $_SESSION['isLoggedIn'] = true;
                 return "Welcome";
             }
 
