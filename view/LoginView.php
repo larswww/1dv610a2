@@ -41,6 +41,12 @@ class LoginView {
 	    $sesh = isset($_SESSION['isLoggedIn']) ?? false;
 
         if ($this->message === "Welcome") {
+
+            if (isset($_SESSION["welcomed"])) {
+                $_SESSION["welcomed"] = true;
+                $this->message = "";
+            }
+
             $response = $this->generateLogoutButtonHTML($this->message);
             $this->message = "";
         } else if ($sesh) {
