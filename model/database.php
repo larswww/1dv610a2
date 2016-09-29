@@ -94,6 +94,14 @@ class userDB {
             $query->execute();
             $user = $query->fetch();
 
+//            if (isset($_COOKIE["LoginView::CookiePassword"])) {
+//               $dbHash = md5($username, $user["password"]);
+//
+//                if ($_COOKIE["LoginView::CookiePassword"] === $dbHash) {
+//                    $isPasswordCorrect = true;
+//                }
+//            }
+
             $isPasswordCorrect = password_verify($password, $user["password"]);
             $isUsernameSame = $user["username"] === $username;
 

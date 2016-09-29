@@ -11,6 +11,9 @@ class AuthController {
         $sesh = isset($_SESSION['isLoggedIn']) ?? false;
         $keepMeLoggedIn = isset($_REQUEST["LoginView::KeepMeLoggedIn"]) ?? false;
 
+//        if (isset($_COOKIE["LoginView::CookieName"]) && $_COOKIE["LoginView::CookiePassword"]) {
+//            $this->db->getUser($_COOKIE["LoginView::CookieName"], $_COOKIE["LoginView::CookiePassword"]);
+//        }
 
         if ($_SERVER["REQUEST_METHOD"] == "POST" && !$sesh) {
 
@@ -22,6 +25,7 @@ class AuthController {
 
             } else if (isset($_REQUEST["LoginView::Login"])) {
                 // can i change the query string to be login?
+
                 $postedName = $_REQUEST["LoginView::UserName"];
                 $postedPassword = $_REQUEST["LoginView::Password"];
 
@@ -38,7 +42,7 @@ class AuthController {
 
             }
 
-        } else {
+        }  else {
 
             if (isset($_REQUEST["LoginView::Logout"])) {
                 session_unset();
