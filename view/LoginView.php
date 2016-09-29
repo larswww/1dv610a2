@@ -40,12 +40,12 @@ class LoginView {
 
 	    $sesh = isset($_SESSION['isLoggedIn']) ?? false;
 
-        if ($this->message === "Welcome" || $sesh) {
-            //
-            if ($sesh) {
-                $this->message = "";
-            }
+        if ($this->message === "Welcome") {
             $response = $this->generateLogoutButtonHTML($this->message);
+            $this->message = "";
+        } else if ($sesh) {
+            $msg = "";
+            $response = $this->generateLogoutButtonHTML($msg);
         } else if ($this->message === "Registered new user.") {
             $response = $this->generateLoginFormHTML($this->message);
         } else if ($_SERVER["QUERY_STRING"] === "register") {
@@ -65,7 +65,7 @@ class LoginView {
 	*/
 	public function generateLogoutButtonHTML($message) {
 		return '
-			<form  method="post" >
+			<form action="?logout" method="post" >
 				<p id="' . self::$messageId . '">' . $message .'</p>
 				<input type="submit" name="' . self::$logout . '" value="logout"/>
 			</form>
@@ -79,7 +79,7 @@ class LoginView {
 	*/
 	private function generateLoginFormHTML($message) {
 		return '
-			<form method="post" > 
+			<form action="?login" method="post" > 
 				<fieldset>
 					<legend>Login - enter Username and password</legend>
 					<p id="' . self::$messageId . '">' . $message . '</p>

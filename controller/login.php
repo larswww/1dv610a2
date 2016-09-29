@@ -17,8 +17,7 @@ class AuthController {
                     $_REQUEST["RegisterView::PasswordRepeat"]);
 
 
-
-            } else if ($_SERVER["QUERY_STRING"] == "") {
+            } else if ($_SERVER["QUERY_STRING"] == "login") {
                 // can i change the query string to be login?
                 $postedName = $_REQUEST["LoginView::UserName"];
                 $postedPassword = $_REQUEST["LoginView::Password"];
@@ -34,6 +33,11 @@ class AuthController {
                     $view->setEnteredName($postedName);
                 }
 
+            } else if ($_SERVER["QUERY_STRING"] == "logout") {
+                session_unset();
+                session_destroy();
+                setcookie("PHPSESSID", 0, time() - 3600);
+                $message = "Bye bye!";
             }
 
         }
