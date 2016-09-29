@@ -40,7 +40,7 @@ class LoginView {
 
 	    $sesh = isset($_SESSION['isLoggedIn']) ?? false;
 
-        if ($this->message === "Welcome") {
+        if ($this->message === "Welcome" || $this->message === "Welcome and you will be rememebered") {
 
             if (isset($_SESSION["welcomed"])) {
                 $_SESSION["welcomed"] = true;

@@ -85,7 +85,7 @@ class userDB {
         return $message;
     }
 
-    public function getUser($username, $password) {
+    public function getUser($username, $password, $keepMeLoggedIn) {
 
         // returns a message status string based on outcome of db query
         // getUser is called from controller using data in $_POST for username and password
@@ -101,9 +101,17 @@ class userDB {
                 return "Wrong name or password";
             } else {
                 $_SESSION['isLoggedIn'] = true;
-
                 $this->setIsLoggedIn(true);
-                return "Welcome";
+                $message = "Welcome";
+
+                if ($keepMeLoggedIn) {
+                    $cookiePass = md5($username . $user["password"]);
+                    setcookie("LoginView::CookieName", $username);
+                    setcookie("LoginView::CookiePassword", $cookiePass);
+                        $message .= " and you will be rememebered";
+                }
+
+                return $message;
             }
 
         } catch (\Exception $e) {

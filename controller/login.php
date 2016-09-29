@@ -9,6 +9,7 @@ class AuthController {
         $view = new \view\LoginView();
         $message = "";
         $sesh = isset($_SESSION['isLoggedIn']) ?? false;
+        $keepMeLoggedIn = isset($_REQUEST["LoginView::KeepMeLoggedIn"]) ?? false;
 
 
         if ($_SERVER["REQUEST_METHOD"] == "POST" && !$sesh) {
@@ -31,7 +32,7 @@ class AuthController {
                     $message = "Password is missing";
                     $view->setEnteredName($postedName);
                 } else {
-                    $message = $this->db->getUser($postedName, $postedPassword);
+                    $message = $this->db->getUser($postedName, $postedPassword, $keepMeLoggedIn);
                     $view->setEnteredName($postedName);
                 }
 
@@ -44,7 +45,8 @@ class AuthController {
                 session_destroy();
                 setcookie("PHPSESSID", 0, time() - 3600);
                 $message = "Bye bye!";
-            } 
+            }
+
 
 
 
