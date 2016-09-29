@@ -11,7 +11,7 @@ class AuthController {
 
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-            if ($_REQUEST["register"] == "1") {
+            if (isset($_REQUEST["register"])) {
                 // too long of a statment
                 $message = $this->db->saveUser($_REQUEST["RegisterView::UserName"], $_REQUEST["RegisterView::Password"],
                     $_REQUEST["RegisterView::PasswordRepeat"]);
