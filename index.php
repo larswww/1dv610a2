@@ -1,8 +1,8 @@
 <?php
 session_start();
 session_regenerate_id();
-// expiry in 30 min
-setcookie("PHPSESSID", $_SESSION["PHPSESSID"], time() + (60 * 60 * 0.5));
+setcookie("PHPSESSID", $_SESSION["PHPSESSID"], time() + (60 * 60 * 0.5), "/a2");
+
 
 include("../config.php");
 
