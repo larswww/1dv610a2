@@ -100,6 +100,8 @@ class userDB {
             if (!$isPasswordCorrect || !$isUsernameSame) {
                 return "Wrong name or password";
             } else {
+                $_SESSION['isLoggedIn'] = true;
+
                 $this->setIsLoggedIn(true);
                 return "Welcome";
             }
