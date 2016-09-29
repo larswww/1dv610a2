@@ -33,7 +33,7 @@ class AuthController {
                     $view->setEnteredName($postedName);
                 }
 
-            } else if ($_SERVER["QUERY_STRING"] == "logout") {
+            } else if (isset($_REQUEST["LoginView::Logout"])) {
                 session_unset();
                 session_destroy();
                 setcookie("PHPSESSID", 0, time() - 3600);
