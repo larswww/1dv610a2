@@ -17,7 +17,7 @@ class AuthController {
                     $_REQUEST["RegisterView::PasswordRepeat"]);
 
 
-            } else if ($_SERVER["QUERY_STRING"] == "login") {
+            } else if (isset($_REQUEST["LoginView::Login"])) {
                 // can i change the query string to be login?
                 $postedName = $_REQUEST["LoginView::UserName"];
                 $postedPassword = $_REQUEST["LoginView::Password"];
