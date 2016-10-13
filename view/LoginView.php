@@ -23,7 +23,7 @@ class LoginView {
 
     public function setController($controller) {
         $this->controller = $controller;
-        $this->message = $this->controller->router();
+        //$this->message = $this->controller->router();
 
     }
 
@@ -38,36 +38,78 @@ class LoginView {
 	 */
 	public function response() {
 
-	    $sesh = isset($_SESSION['isLoggedIn']) ?? false;
+	    $viewFunctionToCall = $this->controller->getViewAction();
+        $response = $this->$viewFunctionToCall();
+        return $response;
 
-        if ($this->message === "Welcome" || $this->message === "Welcome and you will be rememebered") {
 
-            if (isset($_SESSION["welcomed"])) {
-                $_SESSION["welcomed"] = true;
-                $this->message = "";
-            }
 
-            $response = $this->generateLogoutButtonHTML($this->message);
-            $this->message = "";
 
-        } else if ($sesh) {
-            $this->message = "";
-            $response = $this->generateLogoutButtonHTML($this->message);
+	    // determine which view to be rendered based on the message? String dependency unfortunately.
+        // can i set this in the POST variable instead?
+        // calls the function suggested by the router?
+//
+//	    $sesh = isset($_SESSION['isLoggedIn']) ?? false;
+//
+//        if ($this->message === "Welcome" || $this->message === "Welcome and you will be remembered") {
+//
+//            if (isset($_SESSION["welcomed"])) {
+//                $_SESSION["welcomed"] = true;
+//                $this->message = "";
+//            }
+//
+//            $response = $this->generateLogoutButtonHTML($this->message);
+//            $this->message = "";
+//
+//        } else if ($sesh) {
+//            $this->message = "";
+//            $response = $this->generateLogoutButtonHTML($this->message);
+//
+//        } else if ($this->message === "Registered new user.") {
+//            $this->setEnteredName($_REQUEST["RegisterView::UserName"]);
+//            $response = $this->generateLoginFormHTML($this->message);
+//
+//        } else if (isset($_REQUEST["register"])) {
+//            $regView = new RegisterView();
+//            $response = $regView->generateRegisterFormHTML($this->message);
+//
+//        }  else {
+//            $response = $this->generateLoginFormHTML($this->message);
+//        }
+//
+//        return $response;
+	}
 
-        } else if ($this->message === "Registered new user.") {
-            $this->setEnteredName($_REQUEST["RegisterView::UserName"]);
-            $response = $this->generateLoginFormHTML($this->message);
+	public function loggedIn(){
 
-        } else if (isset($_REQUEST["register"])) {
-            $regView = new RegisterView();
-            $response = $regView->generateRegisterFormHTML($this->message);
-
-        }  else {
-            $response = $this->generateLoginFormHTML($this->message);
+        if (isset($_SESSION["welcomed"])) {
+            $_SESSION["welcomed"] = true;
+            $message = "";
         }
 
+        $response = $this->generateLogoutButtonHTML($message);
+        $this->message = "";
         return $response;
-	}
+
+    }
+
+    public function defaultView() {
+        $message = "";
+
+        if (isset($_REQUEST["LoginView::Logout"])) {
+            session_unset();
+            session_destroy();
+            setcookie("PHPSESSID", 0, time() - 3600);
+            $message = "Bye bye!";
+        }
+
+        return $this->generateLoginFormHTML($message);
+    }
+
+    public function registerView() {
+        $regView = new RegisterView();
+        return $regView->generateRegisterFormHTML("");
+    }
 
 	/**
 	* Generate HTML code on the output buffer for the logout button
