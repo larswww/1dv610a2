@@ -1,10 +1,16 @@
 <?php
 namespace view;
 
-class LayoutView {
-  
-  public function render($isLoggedIn, LoginView $v, DateTimeView $dtv) {
-    echo '<!DOCTYPE html>
+use model\GateKeeper;
+
+require_once('./model/GateKeeper.php');
+
+class LayoutView
+{
+
+    public function render(GateKeeper $gk, LoginView $v, DateTimeView $dtv)
+    {
+        echo '<!DOCTYPE html>
       <html>
         <head>
           <meta charset="utf-8">
@@ -12,36 +18,36 @@ class LayoutView {
         </head>
         <body>
           <h1>Assignment 2</h1>
-          ' . $this->renderIsLoggedIn($isLoggedIn) . '
+          ' . $this->renderIsLoggedIn($gk) . '
           
           <div class="container">
-              ' . $v->response() . '
+              ' . $v->getResponse() . '
               
               ' . $dtv->show() . '
           </div>
          </body>
       </html>
     ';
-  }
+    }
 
     /**
      * @param $isLoggedIn
      * @return string
      */
-    private function renderIsLoggedIn($isLoggedIn) {
-        $isLogged = $_SESSION['isLoggedIn'] ?? false;
+    private function renderIsLoggedIn(GateKeeper $gk)
+    {
+        $isLoggedIn = $gk->getIsLoggedIn();
 
-        if ($isLogged) {
-      return '<h2>Logged in</h2>';
-    }
-    else {
-        if ($_SERVER["QUERY_STRING"] === "register=1") {
-            $message = "<a href='?'>Back to login</a>";
+        if ($isLoggedIn) {
+            return '<h2>Logged in</h2>';
         } else {
-            $message = "<a href='?action=registerView'>Register a new user</a>";
-        }
+            if ($_SERVER["QUERY_STRING"] === "register") {
+                $message = "<a href='?'>Back to login</a>";
+            } else {
+                $message = "<a href='?register'>Register a new user</a>";
+            }
 
-      return $message . "<h2>Not logged in</h2>";
+            return $message . "<h2>Not logged in</h2>";
+        }
     }
-  }
 }

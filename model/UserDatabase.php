@@ -1,7 +1,7 @@
 <?php
 namespace model;
 
-class userDB {
+class UserDatabase {
     private $db;
     private $isLoggedIn = false;
 
@@ -21,44 +21,19 @@ class userDB {
         }
     }
 
-    public function saveUser($username, $password, $passwordRepeat) {
-        $message = "";
-        $validUsername = true;
+    public function saveUser(User $user) {
 
-        if (strlen($username) < 4) {
-            $message .= "Username has too few characters, at least 3 characters. ";
-        }
-
-        if (strlen($password) < 7) {
-            // dont save the username if the username and the password is invalid
-            if (strlen($message) > 2) {
-                $validUsername = false;
-            }
-            $message .= "Password has too few characters, at least 6 characters.";
-        }
-
-        if ($password !== $passwordRepeat) {
-            $message = "Passwords do not match.";
-        }
+        $username = $user->getUsername();
+        $password = $user->getPassword();
 
         $checkUsernameQuery = $this->db->prepare("SELECT COUNT(*) FROM users WHERE username = '$username'");
         $checkUsernameQuery->execute();
-        $usernameResult = $checkUsernameQuery->fetch();
+        $foundUsername = $checkUsernameQuery->fetch();
 
-        if ($usernameResult["0"] !== "0") {
-            $message = "User exists, pick another username.";
+        if ($foundUsername) {
+            throw new \Exception("User exists, pick another username.");
         }
 
-        $sanitizeUsername = htmlentities($username, ENT_QUOTES | ENT_IGNORE, "UTF-8");
-
-        // this feels not that great, can encodings mess with this?
-        if ($sanitizeUsername !== $username) {
-            $username = strip_tags($username);
-            $message = "Username contains invalid characters.";
-        }
-
-        if ($message === "") {
-            // hash password using bcrypt then save into database
             try {
                 $userSchema = $this->db->prepare("INSERT INTO users (username, password)" . "VALUES (:username, :password)");
 
@@ -67,33 +42,25 @@ class userDB {
                     "username" => $username,
                     "password" => $pwHash
                 ));
-                $message = "Registered new user.";
 
             } catch (\Exception $e) {
                 $validUsername = false;
                 echo $e->getMessage();
             }
-        }
-
-        if ($validUsername) {
-            $regView = new \view\RegisterView();
-            // change this to using isset and filter it first.
-            $regView->setEnteredName($username);
-        }
-
-
-        return $message;
     }
 
-    public function getUser($username, $password, $keepMeLoggedIn) {
+    public function getUser(User $user) {
+        $username = $user->getUsername();
+        $password = $user->getPassword();
+        $keepMeLoggedIn = $user->getKeepLoggedIn();
 
-        // returns a message status string based on outcome of db query
-        // getUser is called from controller using data in $_POST for username and password
-        try {
+
+//        try {
             $query = $this->db->prepare("SELECT username, password FROM users WHERE username = '$username'");
             $query->execute();
-            $user = $query->fetch();
+            $userQuery = $query->fetch();
 
+            //TODO this was planned for cookie password hash thing - continue or remove it?
 //            if (isset($_COOKIE["LoginView::CookiePassword"])) {
 //               $dbHash = md5($username, $user["password"]);
 //
@@ -102,11 +69,11 @@ class userDB {
 //                }
 //            }
 
-            $isPasswordCorrect = password_verify($password, $user["password"]);
-            $isUsernameSame = $user["username"] === $username;
+            $isPasswordCorrect = password_verify($password, $userQuery["password"]); //TODO is that really a userQuery?
+            $isUsernameSame = $user->getUsername() === $username; // TODO is this needed? Would the DB query actually return a username if it wasnt the same? legacy from sanitize?
 
             if (!$isPasswordCorrect || !$isUsernameSame) {
-                return "Wrong name or password";
+                throw new \Exception("Wrong name or password");
             } else {
                 $_SESSION['isLoggedIn'] = true;
                 $this->setIsLoggedIn(true);
@@ -118,16 +85,10 @@ class userDB {
                     setcookie("LoginView::CookiePassword", $cookiePass);
                         $message .= " and you will be rememebered";
                 }
-
-                return $message;
             }
-
-        } catch (\Exception $e) {
-            return "Login Error - Please try again";
-
-        }
     }
 
+    //TODO is this code now legacy?
     private function setIsLoggedIn(bool $status) {
         $this->isLoggedIn = $status;
     }

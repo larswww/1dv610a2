@@ -1,9 +1,15 @@
 <?php
 namespace view;
-use Controller;
-require_once('RegisterView.php');
+use controller\AuthController;
+use model\GateKeeper;
+use model\GateKeeperListener;
+use model\User;
 
-class LoginView {
+require_once('RegisterView.php');
+require_once('./model/User.php');
+require_once('./model/GateKeeper.php');
+
+class LoginView implements GateKeeperListener {
 	private static $login = 'LoginView::Login';
 	private static $logout = 'LoginView::Logout';
 	private static $name = 'LoginView::UserName';
@@ -13,20 +19,155 @@ class LoginView {
 	private static $keep = 'LoginView::KeepMeLoggedIn';
 	private static $messageId = 'LoginView::Message';
     private static $enteredName = "";
-    private $authStatus;
-    public $message;
+    private static $registerName = 'RegisterView::UserName';
+    private static $registerPassword = 'RegisterView::Password';
+    private static $passwordRepeat = 'RegisterView::PasswordRepeat';
+    private static $doRegistration = 'RegisterView::PasswordRepeat';
+
+    private $message = "";
+    private $gateKeeper;
+    private $wantsToLogin;
+    private $wantsToLogout;
+    private $wantsToRegister;
+    private $user;
+    private $authController;
+    private $shouldDisplayError;
+    private $response;
 
 
     public function setEnteredName($name) {
         return self::$enteredName = $name;
     }
 
-    public function setController($controller) {
-        $this->controller = $controller;
-        //$this->message = $this->controller->router();
+    public function setGateKeeper(GateKeeper $keeper) {
+        $this->gateKeeper = $keeper;
+    }
+
+    public function getGateKeeper() {
+        return $this->gateKeeper;
+    }
+
+    public function setController(AuthController $controller) {
+        $this->authController = $controller;
+    }
+
+    public function setMessage($message) {
+        $this->message .= $message;
 
     }
 
+    // TODO: PHP auto implemented prooperties?
+    public function userWantsToLogout() {
+        return $this->wantsToLogout;
+    }
+
+    private function setWantsToLogout(bool $want) {
+        $this->wantsToLogout = $want;
+    }
+
+    public function userWantsToLogin() {
+        return $this->wantsToLogin;
+    }
+
+    private function setWantsToLogin(bool $want) {
+        $this->wantsToLogin = $want;
+
+    }
+
+    public function userWantsToRegister() {
+        return $this->wantsToRegister;
+
+    }
+
+    private function setWantsToRegister(bool $want) {
+        $this->wantsToRegister = $want;
+
+    }
+
+    public function getUser() {
+        return $this->user;
+
+    }
+
+    private function setUser(\model\User $user) {
+        $this->user = $user;
+    }
+
+    public function handleError($msg) {
+        // set the message
+        // continue executing response with whatever view was wanted
+        $this->setMessage($msg);
+        $this->shouldDisplayError = true;
+
+    }
+
+    public function shouldDisplayError() {
+        return $this->shouldDisplayError;
+    }
+
+    private function setResponse(string $res) {
+        $this->response = $res;
+
+    }
+
+    public function getResponse() {
+        return $this->response;
+    }
+
+    public function getUserInput() {
+
+        if ($this->gateKeeper->getIsLoggedIn()) {
+
+            if (isset($_REQUEST[self::$logout])) {
+                $this->setWantsToLogout(true);
+
+                session_unset();
+                session_destroy();
+                setcookie("PHPSESSID", 0, time() - 3600);
+                $message = "Bye bye!";
+            }
+
+        } else {
+
+
+
+            // wants to submit registration
+            if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_REQUEST["register"])) {
+
+                $this->setWantsToRegister(true);
+
+                $user = new User();
+                // TODO there must be a better way to import these values?
+                $this->setUser($user);
+                $user->registrationAttempt($_REQUEST[self::$registerPassword], $_REQUEST[self::$passwordRepeat], $_REQUEST[self::$registerName]);
+
+
+            } else if (isset($_REQUEST[self::$login])) {
+                $this->setWantsToLogin(true);
+
+                //TODO abstract into a createSetUser() method?
+                $postedName = $_REQUEST[self::$name];
+
+                //TODO I'm now double checking this somewhere.
+                if (empty($postedName)) {
+                    throw new \Exception("Username is missing");
+                }
+
+                $postedPassword = $_REQUEST[self::$password];
+                $user = new \model\User();
+                $user->setUsername($postedName);
+                $user->setPassword($postedPassword);
+
+                $this->setUser($user);
+
+            } else if (isset($_REQUEST["register"])) {
+                $this->setWantsToRegister(true);
+                $this->shouldDisplayError = true; //TODO fulhaxx test, fixa. bypassController?
+
+            }
+
+        }
+    }
 
 
     /**bre
@@ -38,49 +179,33 @@ class LoginView {
 	 */
 	public function response() {
 
-	    $viewFunctionToCall = $this->controller->getViewAction();
-        $response = $this->$viewFunctionToCall();
-        return $response;
+        // inte inloggad
 
+        // TODO put this in one logged in / not logged in if else
 
+        if ($this->shouldDisplayError()) {
 
+            if ($this->userWantsToRegister()) {
+                return $this->registerView();
+            }
 
-	    // determine which view to be rendered based on the message? String dependency unfortunately.
-        // can i set this in the POST variable instead?
-        // calls the function suggested by the router?
-//
-//	    $sesh = isset($_SESSION['isLoggedIn']) ?? false;
-//
-//        if ($this->message === "Welcome" || $this->message === "Welcome and you will be remembered") {
-//
-//            if (isset($_SESSION["welcomed"])) {
-//                $_SESSION["welcomed"] = true;
-//                $this->message = "";
-//            }
-//
-//            $response = $this->generateLogoutButtonHTML($this->message);
-//            $this->message = "";
-//
-//        } else if ($sesh) {
-//            $this->message = "";
-//            $response = $this->generateLogoutButtonHTML($this->message);
-//
-//        } else if ($this->message === "Registered new user.") {
-//            $this->setEnteredName($_REQUEST["RegisterView::UserName"]);
-//            $response = $this->generateLoginFormHTML($this->message);
-//
-//        } else if (isset($_REQUEST["register"])) {
-//            $regView = new RegisterView();
-//            $response = $regView->generateRegisterFormHTML($this->message);
-//
-//        }  else {
-//            $response = $this->generateLoginFormHTML($this->message);
-//        }
-//
-//        return $response;
+            if ($this->userWantsToLogin()) {
+                return $this->defaultView();
+            }
+
+            if ($this->userWantsToLogout()) {
+                // any error for logout?
+            }
+            // skip all of this and just show show show it yah
+
+        }
+
+        $this->authController->router();
+
 	}
 
 	public function loggedIn(){
+	    $message = "Welcome";
 
         if (isset($_SESSION["welcomed"])) {
             $_SESSION["welcomed"] = true;
@@ -88,27 +213,42 @@ class LoginView {
         }
 
         $response = $this->generateLogoutButtonHTML($message);
-        $this->message = "";
-        return $response;
+        $this->setResponse($response);
 
     }
 
+    public function loginFailed()
+    {
+        // TODO: Implement loginFailed() method.
+        $this->setMessage("Login failed");
+    }
+
+    public function registered()
+    {
+        // TODO: Implement registered() method.
+        $this->setMessage("Registered new user.");
+        $this->defaultView();
+    }
+
+    public function logOut(){
+        $this->message = "Bye bye!";
+        $this->defaultView();
+    }
+
     public function defaultView() {
-        $message = "";
 
-        if (isset($_REQUEST["LoginView::Logout"])) {
-            session_unset();
-            session_destroy();
-            setcookie("PHPSESSID", 0, time() - 3600);
-            $message = "Bye bye!";
-        }
-
-        return $this->generateLoginFormHTML($message);
+        $response = $this->generateLoginFormHTML($this->message);
+        $this->setResponse($response);
     }
 
     public function registerView() {
         $regView = new RegisterView();
-        return $regView->generateRegisterFormHTML("");
+        $user = $this->getUser();
+        $attemptedName = isset($user) ? $user->getAttemptedUsername() : "";
+        $regView->setEnteredName($attemptedName);
+        $response = $regView->generateRegisterFormHTML($this->message);
+        $this->setResponse($response);
+
     }
 
 	/**
