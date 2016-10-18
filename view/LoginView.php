@@ -147,6 +147,7 @@ class LoginView implements GateKeeperListener {
 
                 //TODO abstract into a createSetUser() method?
                 $postedName = $_REQUEST[self::$name];
+                $this->setEnteredName($postedName);
 
                 //TODO I'm now double checking this somewhere.
                 if (empty($postedName)) {
@@ -297,4 +298,5 @@ class LoginView implements GateKeeperListener {
 		//RETURN REQUEST VARIABLE: USERNAME
         return $this->name;
 	}
+
 }
