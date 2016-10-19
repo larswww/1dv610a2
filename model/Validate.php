@@ -121,7 +121,7 @@ class Validate
 
         if ($password !== $repeatedPassword) {
 
-            throw new \Exception("Passwords do not match");
+            throw new \Exception("Passwords do not match.");
         }
 
     }
