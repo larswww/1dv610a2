@@ -18,7 +18,11 @@ interface GateKeeperListener {
 
     public function loggedIn();
 
+    public function logOut();
+
     public function registered();
+
+    public function sessionedIn();
 
 }
 
@@ -68,6 +72,14 @@ class GateKeeper
     }
 
     public function logOut(GateKeeperListener $gateKeeperListener) {
+        $this->setIsLoggedIn(false);
+        $gateKeeperListener->logOut();
+
+    }
+
+    public function sessionIn(GateKeeperListener $gateKeeperListener){
+        $this->setIsLoggedIn(true);
+        $gateKeeperListener->sessionedIn();
 
     }
 

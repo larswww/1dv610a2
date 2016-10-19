@@ -90,7 +90,7 @@ class Validate
         }
 
         try {
-            
+
             $this->checkLength($username, $minUsernameLength, $maxUsernameLength, "Username");
 
         } catch (\Exception $e) {

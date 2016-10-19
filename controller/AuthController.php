@@ -33,6 +33,17 @@ class AuthController {
                 $this->gateKeeper->logOut($this->view);
             }
 
+        } else if ($this->view->backWithSession()) {
+
+            if ($this->view->userWantsToLogout()) {
+
+                $this->gateKeeper->logOut($this->view);
+
+            } else {
+                $this->gateKeeper->sessionIn($this->view);
+
+            }
+
         } else {
 
             if ($this->view->userWantsToLogin()) {

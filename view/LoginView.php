@@ -29,6 +29,7 @@ class LoginView implements GateKeeperListener {
     private $wantsToLogin;
     private $wantsToLogout;
     private $wantsToRegister;
+    private $backWithSession;
     private $user;
     private $authController;
     private $shouldDisplayError;
@@ -74,6 +75,14 @@ class LoginView implements GateKeeperListener {
 
     }
 
+    public function backWithSession() {
+        return $this->backWithSession;
+    }
+
+    private function setBackWithSession(bool $want) {
+        $this->backWithSession = $want;
+    }
+
     public function userWantsToRegister() {
         return $this->wantsToRegister;
 
@@ -115,19 +124,16 @@ class LoginView implements GateKeeperListener {
     }
 
     public function getUserInput() {
+        $backWithSession = isset($_SESSION['isLoggedIn']);
+        $this->setBackWithSession($backWithSession);
 
-        if ($this->gateKeeper->getIsLoggedIn()) {
+        if ($this->gateKeeper->getIsLoggedIn() || $backWithSession) {
 
             if (isset($_REQUEST[self::$logout])) {
                 $this->setWantsToLogout(true);
-
-                session_unset();
-                session_destroy();
-                setcookie("PHPSESSID", 0, time() - 3600);
-                $message = "Bye bye!";
             }
 
-        } else {
+        }  else {
 
 
 
@@ -213,15 +219,22 @@ class LoginView implements GateKeeperListener {
 
 	public function loggedIn(){
 	    $message = "Welcome";
+        $_SESSION['isLoggedIn'] = $this->gateKeeper->getIsLoggedIn();
 
-        if (isset($_SESSION["welcomed"])) {
-            $_SESSION["welcomed"] = true;
-            $message = "";
-        }
+//        if (isset($_SESSION["welcomed"])) {
+//            $_SESSION["welcomed"] = true;
+//            $message = "";
+//        }
 
         $response = $this->generateLogoutButtonHTML($message);
         $this->setResponse($response);
 
+    }
+
+    public function sessionedIn() {
+
+        $response = $this->generateLogoutButtonHTML($this->message);
+        $this->setResponse($response);
     }
 
     public function loginFailed()
@@ -241,7 +254,11 @@ class LoginView implements GateKeeperListener {
     }
 
     public function logOut(){
-        $this->message = "Bye bye!";
+        $this->setMessage("Bye bye!");
+        $_SESSION['isLoggedIn'] = false;
+        session_unset();
+        session_destroy();
+        setcookie("PHPSESSID", 0, time() - 3600);
         $this->defaultView();
     }
 
