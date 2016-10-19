@@ -80,7 +80,9 @@ class Validate
 
         //TODO write a custom chained-exception handler or something?
         try {
-            $this->checkLength($username, $minUsernameLength, $maxUsernameLength, "Username");
+
+            $this->checkLength($password, $minPasswordLength, $maxPasswordLength, "Password");
+
 
         } catch (\Exception $e) {
             $message .= $e->getMessage() . " ";
@@ -88,8 +90,8 @@ class Validate
         }
 
         try {
-
-            $this->checkLength($password, $minPasswordLength, $maxPasswordLength, "Password");
+            
+            $this->checkLength($username, $minUsernameLength, $maxUsernameLength, "Username");
 
         } catch (\Exception $e) {
            $message .= $e->getMessage();
