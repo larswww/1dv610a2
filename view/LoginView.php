@@ -253,9 +253,9 @@ class LoginView implements GateKeeperListener {
 
     public function registerView() {
         $regView = new RegisterView();
-        $attemptedName = $this->user->getAttemptedUsername();
-        $username = isset($attemptedName) ? $this->user->getAttemptedUsername() : self::$enteredName;
-        $regView->setEnteredName($username);
+        $attemptedUsernameOrEmpty = (isset($this->user)) ? $this->user->getAttemptedUsername() : self::$enteredName;
+        //$username = isset($attemptedName) ? $this->user->getAttemptedUsername() : self::$enteredName;
+        $regView->setEnteredName($attemptedUsernameOrEmpty);
         $response = $regView->generateRegisterFormHTML($this->message);
         $this->setResponse($response);
 
