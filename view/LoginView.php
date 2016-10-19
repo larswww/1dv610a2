@@ -22,7 +22,7 @@ class LoginView implements GateKeeperListener {
     private static $registerName = 'RegisterView::UserName';
     private static $registerPassword = 'RegisterView::Password';
     private static $passwordRepeat = 'RegisterView::PasswordRepeat';
-    private static $doRegistration = 'RegisterView::PasswordRepeat';
+    private static $doRegistration = 'RegisterView::DoRegistration';
 
     private $message = "";
     private $gateKeeper;
@@ -132,7 +132,29 @@ class LoginView implements GateKeeperListener {
 
 
             // wants to submit registration
-            if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_REQUEST["register"])) {
+            if (isset($_REQUEST[self::$login])) {
+
+                // change to:
+                $this->setWantsToLogin(true);
+
+                //TODO abstract into a createSetUser() method?
+                $postedName = $_REQUEST[self::$name];
+
+                //TODO I'm now double checking this somewhere.
+                if (empty($postedName)) {
+                    throw new \Exception("Username is missing");
+                }
+
+                $this->setEnteredName($postedName);
+
+                $postedPassword = $_REQUEST[self::$password];
+                $user = new \model\User();
+                $user->setUsername($postedName);
+                $user->setPassword($postedPassword);
+
+                $this->setUser($user);
+
+            } else if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_REQUEST["register"])) {
 
                 $this->setWantsToRegister(true);
 
@@ -142,26 +164,8 @@ class LoginView implements GateKeeperListener {
                 $user->registrationAttempt($_REQUEST[self::$registerPassword], $_REQUEST[self::$passwordRepeat], $_REQUEST[self::$registerName]);
 
 
-            } else if (isset($_REQUEST[self::$login])) {
-                $this->setWantsToLogin(true);
 
-                //TODO abstract into a createSetUser() method?
-                $postedName = $_REQUEST[self::$name];
-                $this->setEnteredName($postedName);
-
-                //TODO I'm now double checking this somewhere.
-                if (empty($postedName)) {
-                    throw new \Exception("Username is missing");
-                }
-
-                $postedPassword = $_REQUEST[self::$password];
-                $user = new \model\User();
-                $user->setUsername($postedName);
-                $user->setPassword($postedPassword);
-
-                $this->setUser($user);
-
-            } else if (isset($_REQUEST["register"])) {
+            } else if (isset($_REQUEST["register"]) && $_REQUEST["register"] === "1") {
                 $this->setWantsToRegister(true);
                 $this->shouldDisplayError = true; //TODO fulhaxx test, fixa. bypassController?
 
@@ -227,6 +231,9 @@ class LoginView implements GateKeeperListener {
     public function registered()
     {
         // TODO: Implement registered() method.
+        $_SERVER['QUERY_STRING'] = "/test.php";
+        $_SERVER['REQUEST_URI'] = "a2/test.php";
+        unset($_REQUEST["register"]);
         $this->setMessage("Registered new user.");
         $this->defaultView();
     }
@@ -259,7 +266,7 @@ class LoginView implements GateKeeperListener {
 	*/
 	public function generateLogoutButtonHTML($message) {
 		return '
-			<form method="post" >
+			<form method="post" action="?">
 				<p id="' . self::$messageId . '">' . $message .'</p>
 				<input type="submit" name="' . self::$logout . '" value="logout"/>
 			</form>
@@ -273,7 +280,7 @@ class LoginView implements GateKeeperListener {
 	*/
 	private function generateLoginFormHTML($message) {
 		return '
-			<form method="post" > 
+			<form method="post" action="?"> 
 				<fieldset>
 					<legend>Login - enter Username and password</legend>
 					<p id="' . self::$messageId . '">' . $message . '</p>

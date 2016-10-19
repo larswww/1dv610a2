@@ -14,6 +14,10 @@ class UserDatabase {
         try {
             $dbSettingString = "mysql:host=" . $config["host"] . ";dbname=" . $config["name"] . ";port=" . $config["port"] . ";charset=" . $config["charset"];
             $this->db = new \PDO($dbSettingString, $config["username"], $config["password"]);
+            $userTable = "CREATE TABLE IF NOT EXISTS users (username VARCHAR(30) NOT NULL,
+                                                            password VARCHAR(60) NOT NULL)";
+            $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $this->db->exec($userTable);
 
         } catch (\PDOException $exception) {
             echo "db connection failed";
@@ -26,7 +30,9 @@ class UserDatabase {
         $username = $user->getUsername();
         $password = $user->getPassword();
 
-        $checkUsernameQuery = $this->db->prepare("SELECT COUNT(*) FROM users WHERE username = '$username'");
+        //TODO should save and fetch as lower case?
+
+        $checkUsernameQuery = $this->db->prepare("SELECT username, password FROM users WHERE username = '$username'");
         $checkUsernameQuery->execute();
         $foundUsername = $checkUsernameQuery->fetch();
 
@@ -82,6 +88,7 @@ class UserDatabase {
                 if ($keepMeLoggedIn) {
                     $cookiePass = md5($username . $user["password"]);
                     setcookie("LoginView::CookieName", $username);
+
                     setcookie("LoginView::CookiePassword", $cookiePass);
                         $message .= " and you will be rememebered";
                 }
