@@ -157,6 +157,8 @@ class LoginView implements GateKeeperListener {
             } else if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_REQUEST["register"])) {
 
                 $this->setWantsToRegister(true);
+                $postedName = $_REQUEST[self::$registerName];
+                $this->setEnteredName($postedName);
 
                 $user = new User();
                 // TODO there must be a better way to import these values?
@@ -251,9 +253,7 @@ class LoginView implements GateKeeperListener {
 
     public function registerView() {
         $regView = new RegisterView();
-        $user = $this->getUser();
-        $attemptedName = isset($user) ? $user->getAttemptedUsername() : "";
-        $regView->setEnteredName($attemptedName);
+        $regView->setEnteredName(self::$enteredName);
         $response = $regView->generateRegisterFormHTML($this->message);
         $this->setResponse($response);
 

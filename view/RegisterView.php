@@ -12,7 +12,7 @@ class RegisterView {
     private static $enteredName = "";
 
     public function setEnteredName($name) {
-        return self::$enteredName = $name;
+         self::$enteredName = $name;
     }
 
     public function generateRegisterFormHTML($message) {
