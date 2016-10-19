@@ -266,7 +266,7 @@ class LoginView implements GateKeeperListener {
 	*/
 	public function generateLogoutButtonHTML($message) {
 		return '
-			<form method="post" action="?">
+			<form method="post" action="test.php">
 				<p id="' . self::$messageId . '">' . $message .'</p>
 				<input type="submit" name="' . self::$logout . '" value="logout"/>
 			</form>
@@ -280,7 +280,7 @@ class LoginView implements GateKeeperListener {
 	*/
 	private function generateLoginFormHTML($message) {
 		return '
-			<form method="post" action="?"> 
+			<form method="post" action="test.php"> 
 				<fieldset>
 					<legend>Login - enter Username and password</legend>
 					<p id="' . self::$messageId . '">' . $message . '</p>
