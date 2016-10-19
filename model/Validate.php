@@ -24,7 +24,7 @@ class Validate
         $sanitizedInput = filter_var($input, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW|FILTER_FLAG_ENCODE_HIGH);
 
         if ($input !== $sanitizedInput) {
-            throw new \Exception("Input contains invalid characters");
+            throw new \Exception("Input contains invalid characters.");
         }
     }
 
@@ -102,7 +102,7 @@ class Validate
 
         if ($password !== $repeatedPassword) {
 
-            throw new \Exception("Passwords do not match");
+            throw new \Exception("Passwords do not match.");
         }
 
     }
