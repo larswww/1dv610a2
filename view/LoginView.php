@@ -157,6 +157,7 @@ class LoginView implements GateKeeperListener {
                 $user = new \model\User();
                 $user->setUsername($postedName);
                 $user->setPassword($postedPassword);
+                $user->setKeepLoggedIn(isset($_REQUEST[self::$keep]));
 
                 $this->setUser($user);
 
@@ -220,6 +221,18 @@ class LoginView implements GateKeeperListener {
 	public function loggedIn(){
 	    $message = "Welcome";
         $_SESSION['isLoggedIn'] = $this->gateKeeper->getIsLoggedIn();
+
+        if($this->user->getKeepLoggedIn()) {
+            $username = $this->user->getUsername();
+            $password = $this->user->getPassword();
+
+            $cookiePass = md5($username, $password);
+            setcookie(self::$cookieName, $username);
+
+            setcookie(self::$cookiePassword, $cookiePass);
+            $message .= " and you will be rememebered";
+
+        }
 
 //        if (isset($_SESSION["welcomed"])) {
 //            $_SESSION["welcomed"] = true;

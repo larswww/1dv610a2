@@ -80,28 +80,6 @@ class UserDatabase {
 
             if (!$isPasswordCorrect || !$isUsernameSame) {
                 throw new \Exception("Wrong name or password");
-            } else {
-                $_SESSION['isLoggedIn'] = true;
-                $this->setIsLoggedIn(true);
-                $message = "Welcome";
-
-                if ($keepMeLoggedIn) {
-                    $cookiePass = md5($username . $user["password"]);
-                    setcookie("LoginView::CookieName", $username);
-
-                    setcookie("LoginView::CookiePassword", $cookiePass);
-                        $message .= " and you will be rememebered";
-                }
             }
     }
-
-    //TODO is this code now legacy?
-    private function setIsLoggedIn(bool $status) {
-        $this->isLoggedIn = $status;
-    }
-
-    public function getIsLoggedIn() {
-        return $this->isLoggedIn;
-    }
-
 }
