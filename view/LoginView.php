@@ -260,7 +260,9 @@ class LoginView implements GateKeeperListener {
             $message = "";
         }
 
-        $response = $this->generateLogoutButtonHTML($message);
+        $this->setMessage($message);
+
+        $response = $this->generateLogoutButtonHTML($this->message);
         $this->setResponse($response);
 
     }
@@ -295,7 +297,7 @@ class LoginView implements GateKeeperListener {
         setcookie("PHPSESSID", 0, time() - 3600);
         setcookie(self::$cookieName, "", time() - 3600);
         setcookie(self::$cookiePassword, "", time() - 3600);
-        
+
         $this->defaultView();
     }
 
