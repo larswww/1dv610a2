@@ -249,9 +249,15 @@ class LoginView implements GateKeeperListener {
 
             $cookiePass = md5($username . $userSessionVariables, $password);
             setcookie(self::$cookieName, $username);
+
             setcookie(self::$cookiePassword, $cookiePass);
             $message .= " and you will be rememebered";
 
+        }
+
+        if (isset($_SESSION["welcomed"])) {
+            $_SESSION["welcomed"] = true;
+            $message = "";
         }
 
         $response = $this->generateLogoutButtonHTML($message);
@@ -289,11 +295,12 @@ class LoginView implements GateKeeperListener {
         setcookie("PHPSESSID", 0, time() - 3600);
         setcookie(self::$cookieName, "", time() - 3600);
         setcookie(self::$cookiePassword, "", time() - 3600);
-
+        
         $this->defaultView();
     }
 
     public function defaultView() {
+
         $response = $this->generateLoginFormHTML($this->message);
         $this->setResponse($response);
     }
