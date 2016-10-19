@@ -58,22 +58,14 @@ class UserDatabase {
     public function getUser(User $user) {
         $username = $user->getUsername();
         $password = $user->getPassword();
-        $keepMeLoggedIn = $user->getKeepLoggedIn();
 
-
-//        try {
             $query = $this->db->prepare("SELECT username, password FROM users WHERE username = '$username'");
             $query->execute();
             $userQuery = $query->fetch();
 
-            //TODO this was planned for cookie password hash thing - continue or remove it?
-//            if (isset($_COOKIE["LoginView::CookiePassword"])) {
-//               $dbHash = md5($username, $user["password"]);
-//
-//                if ($_COOKIE["LoginView::CookiePassword"] === $dbHash) {
-//                    $isPasswordCorrect = true;
-//                }
-//            }
+        if ($user->getKeepLoggedIn()) {
+
+        }
 
             $isPasswordCorrect = password_verify($password, $userQuery["password"]); //TODO is that really a userQuery?
             $isUsernameSame = $user->getUsername() === $userQuery["username"]; // TODO is this needed? Would the DB query actually return a username if it wasnt the same? legacy from sanitize?

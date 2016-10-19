@@ -133,6 +133,26 @@ class LoginView implements GateKeeperListener {
                 $this->setWantsToLogout(true);
             }
 
+            if ($backWithSession && isset($_COOKIE[self::$cookieName])) {
+                // try to login with the dehashed cookie password?
+                //(basically call the login function)
+                $username = $_COOKIE[self::$cookieName];
+                $hasedCookiePassword = $_COOKIE[self::$cookiePassword];
+
+
+
+
+                //            if (isset($_COOKIE["LoginView::CookiePassword"])) {
+//               $dbHash = md5($username, $user["password"]);
+//
+//                if ($_COOKIE["LoginView::CookiePassword"] === $dbHash) {
+//                    $isPasswordCorrect = true;
+//                }
+//            }
+
+
+            }
+
         }  else {
 
 
@@ -225,19 +245,14 @@ class LoginView implements GateKeeperListener {
         if($this->user->getKeepLoggedIn()) {
             $username = $this->user->getUsername();
             $password = $this->user->getPassword();
+            $userSessionVariables = $_SERVER["HTTP_USER_AGENT"] . $_SERVER["HTTP_ACCEPT_LANGUAGE"];
 
-            $cookiePass = md5($username, $password);
+            $cookiePass = md5($username . $userSessionVariables, $password);
             setcookie(self::$cookieName, $username);
-
             setcookie(self::$cookiePassword, $cookiePass);
             $message .= " and you will be rememebered";
 
         }
-
-//        if (isset($_SESSION["welcomed"])) {
-//            $_SESSION["welcomed"] = true;
-//            $message = "";
-//        }
 
         $response = $this->generateLogoutButtonHTML($message);
         $this->setResponse($response);
@@ -272,11 +287,13 @@ class LoginView implements GateKeeperListener {
         session_unset();
         session_destroy();
         setcookie("PHPSESSID", 0, time() - 3600);
+        setcookie(self::$cookieName, "", time() - 3600);
+        setcookie(self::$cookiePassword, "", time() - 3600);
+
         $this->defaultView();
     }
 
     public function defaultView() {
-
         $response = $this->generateLoginFormHTML($this->message);
         $this->setResponse($response);
     }
