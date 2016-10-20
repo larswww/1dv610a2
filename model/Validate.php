@@ -1,14 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: MBAi
- * Date: 14/10/2016
- * Time: 1:16 PM
- */
 
 namespace model;
-//require_once('AuthenticationException.php');
-
 
 class Validate
 {
@@ -21,7 +13,6 @@ class Validate
 
     public function sanitizeSQL($input) {
 
-        //TODO error message shows username contains invalid characters, even if password contained the invalid chars.
         $sanitizedInput = filter_var($input, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW|FILTER_FLAG_ENCODE_HIGH);
 
         if ($input !== $sanitizedInput) {
@@ -79,7 +70,6 @@ class Validate
 
         $message = "";
 
-        //TODO write a custom chained-exception handler or something?
         try {
 
             $this->checkLength($password, $minPasswordLength, $maxPasswordLength, "Password");

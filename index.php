@@ -1,36 +1,43 @@
 <?php
 session_start();
 
+// config file returning array $config with credentials for database
 include("../config.php");
 
-//INCLUDE THE FILES NEEDED...
 require_once('view/LoginView.php');
 require_once('view/DateTimeView.php');
 require_once('view/LayoutView.php');
+require_once('controller/AuthController.php');
 
-//require_once('model/UserDatabase.php');
-//require_once('controller/AuthController.php');
+try {
 
-//MAKE SURE ERRORS ARE SHOWN... MIGHT WANT TO TURN THIS OFF ON A PUBLIC SERVER
-error_reporting(E_ALL);
-ini_set('display_errors', 'On');
+    $gk = new \model\GateKeeper();
+    $v = new \view\LoginView();
+    $v->setGateKeeper($gk);
 
-// CREATE OBJECTS OF THE MODELS
-//$db = new \model\userDB($config);
+    $dtv = new \view\DateTimeView();
+    $lv = new \view\LayoutView();
 
-// CREATE OBJECTS OF THE CONTROLLERS
-//$authController = new \Controller\AuthController();
-//$authController->setDb($db);
-//$authController->router();
+    $db = new \model\UserDatabase($config);
+    $gk->connectDatabase($db);
 
-//CREATE OBJECTS OF THE VIEWS
-$v = new \view\LoginView();
-//$v->setController($authController);
-$dtv = new \view\DateTimeView();
-$lv = new \view\LayoutView();
-$gk = new \model\GateKeeper();
+    $c = new \controller\AuthController();
+    $c->setViewAndKeeper($v, $gk);
 
-//$test = new \view\RegisterView();
+    $v->setController($c);
+    $v->getUserInput();
+    $v->response();
 
-$lv->render($gk->getIsLoggedIn(), $v, $dtv);
+    $lv->render($gk, $v, $dtv);
+
+    // custom exception class for all exceptions related to this module
+} catch (AuthenticationException $e) {
+    $v->handleError($e->getMessage());
+    $v->response();
+    $lv->render($gk, $v, $dtv);
+
+} catch (Exception $e) {
+    error_log($e->getMessage(), 0);
+}
+
 

@@ -60,7 +60,7 @@ class LoginView implements GateKeeperListener {
         return $this->wantsToLogout;
     }
 
-    private function setWantsToLogout(bool $want) {
+    public function setWantsToLogout(bool $want) {
         $this->wantsToLogout = $want;
     }
 
@@ -68,7 +68,7 @@ class LoginView implements GateKeeperListener {
         return $this->wantsToLogin;
     }
 
-    private function setWantsToLogin(bool $want) {
+    public function setWantsToLogin(bool $want) {
         $this->wantsToLogin = $want;
     }
 
@@ -76,7 +76,7 @@ class LoginView implements GateKeeperListener {
         return $this->backWithSession;
     }
 
-    private function setBackWithSession(bool $want) {
+    public function setBackWithSession(bool $want) {
         $this->backWithSession = $want;
     }
 
@@ -84,7 +84,7 @@ class LoginView implements GateKeeperListener {
         return $this->wantsToRegister;
     }
 
-    private function setWantsToRegister(bool $want) {
+    public function setWantsToRegister(bool $want) {
         $this->wantsToRegister = $want;
     }
 

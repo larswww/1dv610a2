@@ -16,7 +16,7 @@ class UserDatabase {
 
     private function createTableIfDoesntExist() {
         $userTable = "CREATE TABLE IF NOT EXISTS users (username VARCHAR(30) NOT NULL,
-                                                            password VARCHAR(60) NOT NULL)";
+                                                        password VARCHAR(60) NOT NULL)";
         $this->db->exec($userTable);
 
     }
@@ -48,8 +48,8 @@ class UserDatabase {
 
         }
 
-            $isPasswordCorrect = password_verify($password, $userQuery["password"]); //TODO is that really a userQuery?
-            $isUsernameSame = $user->getUsername() === $userQuery["username"]; // TODO is this needed? Would the DB query actually return a username if it wasnt the same? legacy from sanitize?
+            $isPasswordCorrect = password_verify($password, $userQuery["password"]);
+            $isUsernameSame = $user->getUsername() === $userQuery["username"];
 
             if (!$isPasswordCorrect || !$isUsernameSame) {
                 throw new \AuthenticationException("Wrong name or password");
