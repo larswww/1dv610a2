@@ -248,8 +248,8 @@ class LoginView implements GateKeeperListener {
 
         $cookiePass = $this->getRandomSessionCookie($username);
 
-        setcookie(self::$cookieName, $username);
-        setcookie(self::$cookiePassword, $cookiePass);
+        setcookie(self::$cookieName, $username, time()+3600);
+        setcookie(self::$cookiePassword, $cookiePass, time()+3600);
     }
 
     private function getRandomSessionCookie($username) {
