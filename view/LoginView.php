@@ -113,8 +113,9 @@ class LoginView implements GateKeeperListener {
     }
 
 
-    //
+    // determine user input and initialize right action with that input
     public function getUserInput() {
+
         $backWithSession = isset($_SESSION['isLoggedIn']);
         $this->setBackWithSession($backWithSession);
         $userIsLoggedIn = $this->gateKeeper->getIsLoggedIn();
@@ -155,6 +156,25 @@ class LoginView implements GateKeeperListener {
     }
 
 
+    // respond based on user input, bypass authentication controller if thrown error at user entry stage, or if clicking register link.
+    public function response() {
+
+        if ($this->shouldBypassController()) {
+
+            if ($this->userWantsToRegister()) {
+                return $this->registerView();
+            }
+
+            if ($this->userWantsToLogin()) {
+                return $this->defaultView();
+            }
+        }
+
+        $this->authController->router();
+    }
+
+
+
     public function initializeUser(string $name) {
         $this->setEnteredName($name);
         $this->user = new User();
@@ -182,25 +202,16 @@ class LoginView implements GateKeeperListener {
 
         $postedName = $_REQUEST[self::$registerName];
         $this->initializeUser($postedName);
-        $this->user->registrationAttempt($_REQUEST[self::$registerPassword], $_REQUEST[self::$passwordRepeat], $_REQUEST[self::$registerName]);
-    }
 
-    // bypass the authentication controller if an error has been thrown at user entry validation stage, or if clicking register link.
-	public function response() {
+        $postedPassword = $_REQUEST[self::$registerPassword];
 
-        if ($this->shouldBypassController()) {
-
-            if ($this->userWantsToRegister()) {
-                return $this->registerView();
-            }
-
-            if ($this->userWantsToLogin()) {
-                return $this->defaultView();
-            }
+        if (empty($postedPassword)) {
+            throw new \Exception("Password has too few characters, at least 6 characters.");
         }
 
-        $this->authController->router();
-	}
+        $this->user->registrationAttempt($postedPassword, $_REQUEST[self::$passwordRepeat], $_REQUEST[self::$registerName]);
+    }
+
 
 	// these actions are called at the end by the GateKeeper interface
 
