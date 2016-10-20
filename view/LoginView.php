@@ -270,7 +270,12 @@ class LoginView implements GateKeeperListener {
     }
 
     public function sessionedIn() {
-        $this->setMessage("Welcome back with cookie");
+
+        if (!isset($_SESSION['cookieWelcomed'])) {
+            $this->setMessage("Welcome back with cookie");
+        }
+
+        $_SESSION['cookieWelcomed'] = true;
 
         $response = $this->generateLogoutButtonHTML($this->message);
         $this->setResponse($response);
