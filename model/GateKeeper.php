@@ -58,7 +58,7 @@ class GateKeeper
 
 
     public function logIn(User $user, GateKeeperListener $gateKeeperListener) {
-        $this->dbConnection->getUser($user); //TODO rename getUser?
+        $this->dbConnection->verifyPasswordFor($user); //TODO rename getUser?
         $this->setIsLoggedIn(true);
        //TODO was this even a requirement? $this->setLoggedInUser($user->getUsername());
         $gateKeeperListener->loggedIn();

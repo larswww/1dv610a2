@@ -7,6 +7,7 @@
  */
 
 namespace model;
+//require_once('AuthenticationException.php');
 
 
 class Validate
@@ -24,7 +25,7 @@ class Validate
         $sanitizedInput = filter_var($input, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW|FILTER_FLAG_ENCODE_HIGH);
 
         if ($input !== $sanitizedInput) {
-            throw new \Exception("Input contains invalid characters.");
+            throw new \AuthenticationException("Input contains invalid characters.");
         }
     }
 
@@ -33,7 +34,7 @@ class Validate
         $sanitizedInput = htmlentities($userInput, ENT_QUOTES | ENT_IGNORE, "UTF-8");
 
         if ($sanitizedInput !== $userInput) {
-            throw new \Exception("Input contains invalid characters.");
+            throw new \AuthenticationException("Input contains invalid characters.");
         }
 
     }
@@ -44,12 +45,12 @@ class Validate
 
         if ($sqlFiltered !== $username) {
             $this->currentUser->setAttemptedUsername($sqlFiltered);
-            throw new \Exception("Username contains invalid characters.");
+            throw new \AuthenticationException("Username contains invalid characters.");
         }
 
         if ($sanitizedInput !== $username) {
             $this->currentUser->setAttemptedUsername($sanitizedInput);
-            throw new \Exception("Username contains invalid characters.");
+            throw new \AuthenticationException("Username contains invalid characters.");
         }
     }
 
@@ -64,7 +65,7 @@ class Validate
     public function ifUsernameIsEmpty($enteredUsername) {
 
         if (empty($enteredUsername)) {
-            throw new \Exception("Username is missing");
+            throw new \AuthenticationException("Username is missing");
         }
 
     }
@@ -98,12 +99,12 @@ class Validate
         }
 
         if (strlen($message) > 0) {
-            throw new \Exception($message);
+            throw new \AuthenticationException($message);
         }
 
         if ($password !== $repeatedPassword) {
 
-            throw new \Exception("Passwords do not match.");
+            throw new \AuthenticationException("Passwords do not match.");
         }
 
     }
@@ -114,14 +115,14 @@ class Validate
         $maxPasswordLength = 30;
 
         if (empty($password)) {
-            throw new \Exception("Password is missing");
+            throw new \AuthenticationException("Password is missing");
         }
 
         $this->checkLength($password, $minPasswordLength, $maxPasswordLength, "Password");
 
         if ($password !== $repeatedPassword) {
 
-            throw new \Exception("Passwords do not match.");
+            throw new \AuthenticationException("Passwords do not match.");
         }
 
     }
@@ -129,12 +130,12 @@ class Validate
     private function checkLength($userInput, $minLength, $maxLength, $ofWhat) {
         if (strlen($userInput) > $maxLength) {
 
-            throw new \Exception("$ofWhat has too many characters, at most " . $maxLength . " characters.");
+            throw new \AuthenticationException("$ofWhat has too many characters, at most " . $maxLength . " characters.");
         }
 
         if (strlen($userInput) < $minLength) {
 
-            throw new \Exception("$ofWhat has too few characters, at least " . $minLength . " characters.");
+            throw new \AuthenticationException("$ofWhat has too few characters, at least " . $minLength . " characters.");
         }
     }
 

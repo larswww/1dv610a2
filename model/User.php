@@ -56,7 +56,6 @@ class User
     public function setPassword($pw) {
         $this->standardValidations($pw);
         $this->validate->password($pw, $pw);
-
         $this->password = $pw;
     }
 
@@ -68,9 +67,7 @@ class User
     }
 
     public function setKeepLoggedIn(bool $userChoice){
-
         $this->keepMeLoggedIn = $userChoice;
-
     }
 
     private function standardValidations($input){

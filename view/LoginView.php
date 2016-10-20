@@ -8,6 +8,7 @@ use model\User;
 require_once('RegisterView.php');
 require_once('./model/User.php');
 require_once('./model/GateKeeper.php');
+require_once('./model/AuthenticationException.php');
 
 class LoginView implements GateKeeperListener {
 	private static $login = 'LoginView::Login';
@@ -187,7 +188,7 @@ class LoginView implements GateKeeperListener {
         $postedPassword = $_REQUEST[self::$password];
 
         if (empty($postedName)) {
-            throw new \Exception("Username is missing");
+            throw new \AuthenticationException("Username is missing");
         }
 
         $this->initializeUser($postedName);
