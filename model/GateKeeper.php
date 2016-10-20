@@ -66,6 +66,11 @@ class GateKeeper
 
     }
 
+    public function backWithSession(GateKeeperListener $gateKeeperListener) {
+        $this->setIsLoggedIn(true);
+        $gateKeeperListener->loggedIn();
+    }
+
     public function sessionIn(User $user, GateKeeperListener $gateKeeperListener){
         $validSession = $this->dbConnection->verifySessionFor($user);
 

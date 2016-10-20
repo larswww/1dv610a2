@@ -17,8 +17,6 @@ class AuthController {
 
         if ($this->gateKeeper->getIsLoggedIn()) {
 
-            $this->check;
-
             if ($this->view->userWantsToLogout()) {
 
                 $this->gateKeeper->logOut($this->view);
@@ -35,7 +33,11 @@ class AuthController {
                 $user = $this->view->getUser();
                 $this->gateKeeper->sessionIn($user, $this->view);
 
+            } else {
+                $this->gateKeeper->backWithSession($this->view);
+
             }
+
 
         } else {
 

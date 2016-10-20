@@ -217,16 +217,18 @@ class LoginView implements GateKeeperListener {
 	public function loggedIn(){
 	    $message = "Welcome";
         $_SESSION['isLoggedIn'] = $this->gateKeeper->getIsLoggedIn();
+        $userKeepLoggedInChoice = (isset($this->user)) ? $this->user->getKeepLoggedIn() : false;
 
-        if($this->user->getKeepLoggedIn()) {
+        if($userKeepLoggedInChoice) {
             $this->setCookieSession();
             $message .= " and you will be rememebered";
         }
 
         if (isset($_SESSION["welcomed"])) {
-            $_SESSION["welcomed"] = true;
             $message = "";
         }
+
+        $_SESSION["welcomed"] = true;
 
         $this->setMessage($message);
         $response = $this->generateLogoutButtonHTML($this->message);
@@ -268,7 +270,8 @@ class LoginView implements GateKeeperListener {
     }
 
     public function sessionedIn() {
-        $this->setMessage("Welcome back with cookies");
+        $this->setMessage("Welcome back with cookie");
+
         $response = $this->generateLogoutButtonHTML($this->message);
         $this->setResponse($response);
     }
