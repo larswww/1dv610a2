@@ -92,10 +92,6 @@ class LoginView implements GateKeeperListener {
         return $this->user;
     }
 
-    private function setUser(\model\User $user) {
-        $this->user = $user;
-    }
-
     public function handleError($msg) {
         $this->setMessage($msg);
         $this->shouldBypassController = true;
@@ -243,21 +239,20 @@ class LoginView implements GateKeeperListener {
 
     private function setCookieSession() {
         $username = $this->user->getUsername();
-        $password = $this->user->getPassword();
 
-        $userSessionVariables = $_SERVER["HTTP_USER_AGENT"] . $_SERVER["HTTP_ACCEPT_LANGUAGE"];
-        $cookiePass = md5($username . $userSessionVariables, $password);
+        $userSessionVariables = $_SERVER["HTTP_USER_AGENT"] . $_SERVER["HTTP_ACCEPT_LANGUAGE"] . $_SESSION["PHPSESSID"];
+        $cookiePass = md5($username . $userSessionVariables);
 
         setcookie(self::$cookieName, $username);
         setcookie(self::$cookiePassword, $cookiePass);
     }
 
     private function unsetCookieSession() {
-        session_unset();
-        session_destroy();
-        setcookie("PHPSESSID", 0, time() - 3600);
+        setcookie('PHPSESSID', "", time() - 3600);
         setcookie(self::$cookieName, "", time() - 3600);
         setcookie(self::$cookiePassword, "", time() - 3600);
+        session_unset();
+        session_destroy();
     }
 
     public function sessionedIn() {
@@ -272,8 +267,8 @@ class LoginView implements GateKeeperListener {
 
     public function registered()
     {
-        $_SERVER['QUERY_STRING'] = "/test.php";
-        $_SERVER['REQUEST_URI'] = "a2/test.php";
+        $_SERVER['QUERY_STRING'] = "/index.php";
+        $_SERVER['REQUEST_URI'] = "a2/index.php";
         unset($_REQUEST["register"]);
         $this->setMessage("Registered new user.");
         $this->defaultView();
@@ -295,7 +290,7 @@ class LoginView implements GateKeeperListener {
 	*/
 	public function generateLogoutButtonHTML($message) {
 		return '
-			<form method="post" action="test.php">
+			<form method="post" action="index.php">
 				<p id="' . self::$messageId . '">' . $message .'</p>
 				<input type="submit" name="' . self::$logout . '" value="logout"/>
 			</form>
@@ -309,7 +304,7 @@ class LoginView implements GateKeeperListener {
 	*/
 	private function generateLoginFormHTML($message) {
 		return '
-			<form method="post" action="test.php"> 
+			<form method="post" action="index.php"> 
 				<fieldset>
 					<legend>Login - enter Username and password</legend>
 					<p id="' . self::$messageId . '">' . $message . '</p>

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: MBAi
- * Date: 14/10/2016
- * Time: 5:11 PM
- */
 
 namespace model;
 require_once('UserDatabase.php');
@@ -35,7 +29,6 @@ class GateKeeper
 
     }
 
-    // TODO should this be initialized as false?
     private $isLoggedIn = false;
     private $loggedInUser = false;
 
@@ -47,11 +40,6 @@ class GateKeeper
         return $this->isLoggedIn;
     }
 
-    //TODO do i need logged in username?
-    private function setLoggedInUser($username) {
-
-    }
-
     public function getLoggedInUser() {
         return $this->loggedInUser;
     }
@@ -60,7 +48,6 @@ class GateKeeper
     public function logIn(User $user, GateKeeperListener $gateKeeperListener) {
         $this->dbConnection->verifyPasswordFor($user); //TODO rename getUser?
         $this->setIsLoggedIn(true);
-       //TODO was this even a requirement? $this->setLoggedInUser($user->getUsername());
         $gateKeeperListener->loggedIn();
 
     }
