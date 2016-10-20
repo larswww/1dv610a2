@@ -16,7 +16,8 @@ class UserDatabase {
 
     private function createTableIfDoesntExist() {
         $userTable = "CREATE TABLE IF NOT EXISTS users (username VARCHAR(30) NOT NULL,
-                                                        password VARCHAR(60) NOT NULL)";
+                                                        password VARCHAR(60) NOT NULL,
+                                                        sessionid VARCHAR(100))";
         $this->db->exec($userTable);
 
     }
@@ -44,22 +45,37 @@ class UserDatabase {
         $password = $user->getPassword();
         $userQuery = $this->getUser($user);
 
-        if ($user->getKeepLoggedIn()) {
-
-        }
-
             $isPasswordCorrect = password_verify($password, $userQuery["password"]);
             $isUsernameSame = $user->getUsername() === $userQuery["username"];
 
             if (!$isPasswordCorrect || !$isUsernameSame) {
                 throw new \AuthenticationException("Wrong name or password");
             }
+
+        if ($user->getKeepLoggedIn()) {
+            $newSessionID = $user->getSessionID();
+            $username = $user->getUsername();
+            $updateSessionID = $this->db->prepare("UPDATE users SET sessionid = '$newSessionID' WHERE username = '$username'");
+            $updateSessionID->execute();
+
+        }
+    }
+
+    public function verifySessionFor(User $user) {
+        $sessionID = $user->getSessionID();
+
+        $userQuery = $this->getUser($user);
+
+        $sessionMatch = $sessionID === $userQuery['sessionid'];
+
+        return $sessionMatch;
+
     }
 
     private function getUser(User $user) {
         $username = $user->getUsername();
 
-        $query = $this->db->prepare("SELECT username, password FROM users WHERE username = '$username'");
+        $query = $this->db->prepare("SELECT username, password, sessionid FROM users WHERE username = '$username'");
         $query->execute();
         $userQuery = $query->fetch();
 

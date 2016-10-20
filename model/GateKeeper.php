@@ -18,6 +18,8 @@ interface GateKeeperListener {
 
     public function sessionedIn();
 
+    public function defaultView();
+
 }
 
 class GateKeeper
@@ -64,9 +66,16 @@ class GateKeeper
 
     }
 
-    public function sessionIn(GateKeeperListener $gateKeeperListener){
-        $this->setIsLoggedIn(true);
-        $gateKeeperListener->sessionedIn();
+    public function sessionIn(User $user, GateKeeperListener $gateKeeperListener){
+        $validSession = $this->dbConnection->verifySessionFor($user);
+
+        if ($validSession) {
+            $this->setIsLoggedIn(true);
+            $gateKeeperListener->sessionedIn();
+
+        } else {
+            $gateKeeperListener->defaultView();
+        }
 
     }
 

@@ -30,8 +30,10 @@ class AuthController {
 
                 $this->gateKeeper->logOut($this->view);
 
-            } else {
-                $this->gateKeeper->sessionIn($this->view);
+            } else if ($this->view->userWantsToLogin()){
+
+                $user = $this->view->getUser();
+                $this->gateKeeper->sessionIn($user, $this->view);
 
             }
 

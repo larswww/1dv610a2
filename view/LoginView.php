@@ -129,9 +129,12 @@ class LoginView implements GateKeeperListener {
             }
 
             if ($backWithSession && $hasUserCookieSet) {
-                //TODO finish or remove
-//                $username = $_COOKIE[self::$cookieName];
-//                $hasedCookiePassword = $_COOKIE[self::$cookiePassword];
+                $this->setWantsToLogin(true);
+                $this->setBackWithSession(true);
+                $this->user = new User();
+                $this->user->setSessionID($this->getRandomSessionCookie($_COOKIE[self::$cookieName]));
+                $this->user->setUsername($_COOKIE[self::$cookieName]);
+
             }
 
         }  else {
@@ -192,6 +195,7 @@ class LoginView implements GateKeeperListener {
         $this->user->setUsername($postedName);
         $this->user->setPassword($postedPassword);
         $this->user->setKeepLoggedIn(isset($_REQUEST[self::$keep]));
+        $this->user->setSessionID($this->getRandomSessionCookie($postedName));
 
     }
 
@@ -240,11 +244,19 @@ class LoginView implements GateKeeperListener {
     private function setCookieSession() {
         $username = $this->user->getUsername();
 
-        $userSessionVariables = $_SERVER["HTTP_USER_AGENT"] . $_SERVER["HTTP_ACCEPT_LANGUAGE"] . $_SESSION["PHPSESSID"];
-        $cookiePass = md5($username . $userSessionVariables);
+        $cookiePass = $this->getRandomSessionCookie($username);
 
         setcookie(self::$cookieName, $username);
         setcookie(self::$cookiePassword, $cookiePass);
+    }
+
+    private function getRandomSessionCookie($username) {
+
+        $userSessionVariables = $_SERVER["HTTP_USER_AGENT"] . $_SERVER["HTTP_ACCEPT_LANGUAGE"] . session_id();
+        $cookieString = md5($username . $userSessionVariables);
+
+        return $cookieString;
+
     }
 
     private function unsetCookieSession() {
@@ -256,6 +268,7 @@ class LoginView implements GateKeeperListener {
     }
 
     public function sessionedIn() {
+        $this->setMessage("Welcome back with cookies");
         $response = $this->generateLogoutButtonHTML($this->message);
         $this->setResponse($response);
     }

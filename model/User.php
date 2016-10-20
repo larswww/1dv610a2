@@ -17,11 +17,20 @@ class User
     private $attemptedUsername = "";
     private $validate;
     private $keepMeLoggedIn;
+    private $sessionID;
 
 
     public function __construct() {
         $this->validate = new \model\Validate();
         $this->validate->setCurrentUser($this);
+    }
+
+    public function setSessionID($id) {
+        $this->sessionID = $id;
+    }
+
+    public function getSessionID() {
+        return $this->sessionID;
     }
 
     public function getAttemptedUsername() {
