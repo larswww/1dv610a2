@@ -32,9 +32,8 @@ class LoginView implements GateKeeperListener {
     private $backWithSession;
     private $user;
     private $authController;
-    private $shouldDisplayError;
+    private $shouldBypassController;
     private $response;
-
 
     public function setEnteredName($name) {
         return self::$enteredName = $name;
@@ -54,10 +53,8 @@ class LoginView implements GateKeeperListener {
 
     public function setMessage($message) {
         $this->message .= $message;
-
     }
 
-    // TODO: PHP auto implemented prooperties?
     public function userWantsToLogout() {
         return $this->wantsToLogout;
     }
@@ -72,7 +69,6 @@ class LoginView implements GateKeeperListener {
 
     private function setWantsToLogin(bool $want) {
         $this->wantsToLogin = $want;
-
     }
 
     public function backWithSession() {
@@ -85,17 +81,14 @@ class LoginView implements GateKeeperListener {
 
     public function userWantsToRegister() {
         return $this->wantsToRegister;
-
     }
 
     private function setWantsToRegister(bool $want) {
         $this->wantsToRegister = $want;
-
     }
 
     public function getUser() {
         return $this->user;
-
     }
 
     private function setUser(\model\User $user) {
@@ -103,121 +96,99 @@ class LoginView implements GateKeeperListener {
     }
 
     public function handleError($msg) {
-        // set the message
-        // continue executing response with whatever view was wanted
         $this->setMessage($msg);
-        $this->shouldDisplayError = true;
-
+        $this->shouldBypassController = true;
     }
 
-    public function shouldDisplayError() {
-        return $this->shouldDisplayError;
+    public function shouldBypassController() {
+        return $this->shouldBypassController;
     }
 
     private function setResponse(string $res) {
         $this->response = $res;
-
     }
 
     public function getResponse() {
         return $this->response;
     }
 
+
+    //
     public function getUserInput() {
         $backWithSession = isset($_SESSION['isLoggedIn']);
         $this->setBackWithSession($backWithSession);
+        $userIsLoggedIn = $this->gateKeeper->getIsLoggedIn();
+        $wantsToLogout = isset($_REQUEST[self::$logout]);
+        $hasUserCookieSet = isset($_COOKIE[self::$cookieName]);
+        $wantsToLogin = isset($_REQUEST[self::$login]);
+        $postedRegistrationForm = $_SERVER["REQUEST_METHOD"] === "POST" && isset($_REQUEST["register"]);
+        $clickedRegistrationLink = isset($_REQUEST["register"]) && $_REQUEST["register"] === "1";
 
-        if ($this->gateKeeper->getIsLoggedIn() || $backWithSession) {
+        if ($userIsLoggedIn || $backWithSession) {
 
-            if (isset($_REQUEST[self::$logout])) {
+            if ($wantsToLogout) {
                 $this->setWantsToLogout(true);
             }
 
-            if ($backWithSession && isset($_COOKIE[self::$cookieName])) {
-                // try to login with the dehashed cookie password?
-                //(basically call the login function)
-                $username = $_COOKIE[self::$cookieName];
-                $hasedCookiePassword = $_COOKIE[self::$cookiePassword];
-
-
-
-
-                //            if (isset($_COOKIE["LoginView::CookiePassword"])) {
-//               $dbHash = md5($username, $user["password"]);
-//
-//                if ($_COOKIE["LoginView::CookiePassword"] === $dbHash) {
-//                    $isPasswordCorrect = true;
-//                }
-//            }
-
-
+            if ($backWithSession && $hasUserCookieSet) {
+                //TODO finish or remove
+//                $username = $_COOKIE[self::$cookieName];
+//                $hasedCookiePassword = $_COOKIE[self::$cookiePassword];
             }
 
         }  else {
 
-
-
-            // wants to submit registration
-            if (isset($_REQUEST[self::$login])) {
-
-                // change to:
+            if ($wantsToLogin) {
                 $this->setWantsToLogin(true);
+                $this->initializeLogin();
 
-                //TODO abstract into a createSetUser() method?
-                $postedName = $_REQUEST[self::$name];
-
-                //TODO I'm now double checking this somewhere.
-                if (empty($postedName)) {
-                    throw new \Exception("Username is missing");
-                }
-
-                $this->setEnteredName($postedName);
-
-                $postedPassword = $_REQUEST[self::$password];
-                $user = new \model\User();
-                $user->setUsername($postedName);
-                $user->setPassword($postedPassword);
-                $user->setKeepLoggedIn(isset($_REQUEST[self::$keep]));
-
-                $this->setUser($user);
-
-            } else if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_REQUEST["register"])) {
-
+            } else if ($postedRegistrationForm) {
                 $this->setWantsToRegister(true);
-                $postedName = $_REQUEST[self::$registerName];
-                $this->setEnteredName($postedName);
+                $this->initializeRegistration();
 
-                $user = new User();
-                // TODO there must be a better way to import these values?
-                $this->setUser($user);
-                $user->registrationAttempt($_REQUEST[self::$registerPassword], $_REQUEST[self::$passwordRepeat], $_REQUEST[self::$registerName]);
-
-
-
-            } else if (isset($_REQUEST["register"]) && $_REQUEST["register"] === "1") {
+            } else if ($clickedRegistrationLink) {
                 $this->setWantsToRegister(true);
-                $this->shouldDisplayError = true; //TODO fulhaxx test, fixa. bypassController?
+                $this->shouldBypassController = true;
 
             }
-
         }
     }
 
 
-    /**bre
-	 * Create HTTP response
-	 *
-	 * Should be called after a login attempt has been determined
-	 *
-	 * @return  void BUT writes to standard output and cookies!
-	 */
+    public function initializeUser(string $name) {
+        $this->setEnteredName($name);
+        $this->user = new User();
+
+    }
+
+    public function initializeLogin() {
+
+        $postedName = $_REQUEST[self::$name];
+        $postedPassword = $_REQUEST[self::$password];
+
+        if (empty($postedName)) {
+            throw new \Exception("Username is missing");
+        }
+
+        $this->initializeUser($postedName);
+
+        $this->user->setUsername($postedName);
+        $this->user->setPassword($postedPassword);
+        $this->user->setKeepLoggedIn(isset($_REQUEST[self::$keep]));
+
+    }
+
+    public function initializeRegistration() {
+
+        $postedName = $_REQUEST[self::$registerName];
+        $this->initializeUser($postedName);
+        $this->user->registrationAttempt($_REQUEST[self::$registerPassword], $_REQUEST[self::$passwordRepeat], $_REQUEST[self::$registerName]);
+    }
+
+    // bypass the authentication controller if an error has been thrown at user entry validation stage, or if clicking register link.
 	public function response() {
 
-        // inte inloggad
-
-        // TODO put this in one logged in / not logged in if else
-
-        if ($this->shouldDisplayError()) {
+        if ($this->shouldBypassController()) {
 
             if ($this->userWantsToRegister()) {
                 return $this->registerView();
@@ -226,33 +197,25 @@ class LoginView implements GateKeeperListener {
             if ($this->userWantsToLogin()) {
                 return $this->defaultView();
             }
-
-            if ($this->userWantsToLogout()) {
-                // any error for logout?
-            }
-            // skip all of this and just show show show it yah
-
         }
 
         $this->authController->router();
-
 	}
+
+	// these actions are called at the end by the GateKeeper interface
+
+    public function defaultView() {
+        $response = $this->generateLoginFormHTML($this->message);
+        $this->setResponse($response);
+    }
 
 	public function loggedIn(){
 	    $message = "Welcome";
         $_SESSION['isLoggedIn'] = $this->gateKeeper->getIsLoggedIn();
 
         if($this->user->getKeepLoggedIn()) {
-            $username = $this->user->getUsername();
-            $password = $this->user->getPassword();
-            $userSessionVariables = $_SERVER["HTTP_USER_AGENT"] . $_SERVER["HTTP_ACCEPT_LANGUAGE"];
-
-            $cookiePass = md5($username . $userSessionVariables, $password);
-            setcookie(self::$cookieName, $username);
-
-            setcookie(self::$cookiePassword, $cookiePass);
+            $this->setCookieSession();
             $message .= " and you will be rememebered";
-
         }
 
         if (isset($_SESSION["welcomed"])) {
@@ -261,27 +224,49 @@ class LoginView implements GateKeeperListener {
         }
 
         $this->setMessage($message);
-
         $response = $this->generateLogoutButtonHTML($this->message);
         $this->setResponse($response);
+    }
 
+    public function logOut(){
+        $this->setMessage("Bye bye!");
+        $_SESSION['isLoggedIn'] = false;
+        $_SESSION['welcomed'] = false;
+        $this->unsetCookieSession();
+        $this->defaultView();
+    }
+
+    private function setCookieSession() {
+        $username = $this->user->getUsername();
+        $password = $this->user->getPassword();
+
+        $userSessionVariables = $_SERVER["HTTP_USER_AGENT"] . $_SERVER["HTTP_ACCEPT_LANGUAGE"];
+        $cookiePass = md5($username . $userSessionVariables, $password);
+
+        setcookie(self::$cookieName, $username);
+        setcookie(self::$cookiePassword, $cookiePass);
+    }
+
+    private function unsetCookieSession() {
+        session_unset();
+        session_destroy();
+        setcookie("PHPSESSID", 0, time() - 3600);
+        setcookie(self::$cookieName, "", time() - 3600);
+        setcookie(self::$cookiePassword, "", time() - 3600);
     }
 
     public function sessionedIn() {
-
         $response = $this->generateLogoutButtonHTML($this->message);
         $this->setResponse($response);
     }
 
     public function loginFailed()
     {
-        // TODO: Implement loginFailed() method.
         $this->setMessage("Login failed");
     }
 
     public function registered()
     {
-        // TODO: Implement registered() method.
         $_SERVER['QUERY_STRING'] = "/test.php";
         $_SERVER['REQUEST_URI'] = "a2/test.php";
         unset($_REQUEST["register"]);
@@ -289,32 +274,13 @@ class LoginView implements GateKeeperListener {
         $this->defaultView();
     }
 
-    public function logOut(){
-        $this->setMessage("Bye bye!");
-        $_SESSION['isLoggedIn'] = false;
-        session_unset();
-        session_destroy();
-        setcookie("PHPSESSID", 0, time() - 3600);
-        setcookie(self::$cookieName, "", time() - 3600);
-        setcookie(self::$cookiePassword, "", time() - 3600);
-
-        $this->defaultView();
-    }
-
-    public function defaultView() {
-
-        $response = $this->generateLoginFormHTML($this->message);
-        $this->setResponse($response);
-    }
-
     public function registerView() {
         $regView = new RegisterView();
         $attemptedUsernameOrEmpty = (isset($this->user)) ? $this->user->getAttemptedUsername() : self::$enteredName;
-        //$username = isset($attemptedName) ? $this->user->getAttemptedUsername() : self::$enteredName;
         $regView->setEnteredName($attemptedUsernameOrEmpty);
+
         $response = $regView->generateRegisterFormHTML($this->message);
         $this->setResponse($response);
-
     }
 
 	/**
@@ -357,11 +323,4 @@ class LoginView implements GateKeeperListener {
 			</form>
 		';
 	}
-	
-	//CREATE GET-FUNCTIONS TO FETCH REQUEST VARIABLES
-	private function getRequestUserName() {
-		//RETURN REQUEST VARIABLE: USERNAME
-        return $this->name;
-	}
-
 }
