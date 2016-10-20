@@ -62,8 +62,6 @@ class User
 
     public function registrationAttempt($pw, $repeatedPw, $username) {
         $this->setUsername($username);
-        $this->standardValidations($pw); // TODO do i need these now?
-        $this->standardValidations($repeatedPw);
         $this->validate->registrationAttempt($pw, $repeatedPw, $username);
         $this->setPassword($pw);
 

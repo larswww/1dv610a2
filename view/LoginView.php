@@ -202,14 +202,7 @@ class LoginView implements GateKeeperListener {
 
         $postedName = $_REQUEST[self::$registerName];
         $this->initializeUser($postedName);
-
-        $postedPassword = $_REQUEST[self::$registerPassword];
-
-        if (empty($postedPassword)) {
-            throw new \Exception("Password has too few characters, at least 6 characters.");
-        }
-
-        $this->user->registrationAttempt($postedPassword, $_REQUEST[self::$passwordRepeat], $_REQUEST[self::$registerName]);
+        $this->user->registrationAttempt($_REQUEST[self::$registerPassword], $_REQUEST[self::$passwordRepeat], $_REQUEST[self::$registerName]);
     }
 
 

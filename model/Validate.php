@@ -101,7 +101,6 @@ class Validate
             throw new \Exception($message);
         }
 
-
         if ($password !== $repeatedPassword) {
 
             throw new \Exception("Passwords do not match.");
@@ -118,7 +117,6 @@ class Validate
             throw new \Exception("Password is missing");
         }
 
-        //TODO the length of username/password error handling string must both be sent to view in succession.
         $this->checkLength($password, $minPasswordLength, $maxPasswordLength, "Password");
 
         if ($password !== $repeatedPassword) {
